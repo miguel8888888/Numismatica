@@ -1,8 +1,27 @@
 <div class="rounded rounded-t-lg overflow-hidden shadow max-w-xs my-3">
-    <img src="https://i.imgur.com/w1Bdydo.jpg" alt="" class="w-full"/>
+    <div class="relative w-full h-[200px] bg-black p-2 flex items-center justify-center my-4">
+        <img
+            alt=""
+            class="object-contain mx-auto transition-opacity duration-[2000ms]"
+            [src]="urlDriveAnverso"
+            [style.opacity]="hover ? 0 : 1"
+            (mouseenter)="hover = true"
+            (mouseleave)="hover = false"
+            style="height: 180px; margin: 0 auto;"
+        />
+        <img
+            alt=""
+            class="object-contain mx-auto absolute transition-opacity duration-[2000ms]"
+            [src]="urlDriveReverso"
+            [style.opacity]="hover ? 1 : 0"
+            (mouseenter)="hover = true"
+            (mouseleave)="hover = false"
+            style="height: 180px; margin: 0 auto;"
+        />
+    </div>
     <div class="flex justify-center -mt-8">
-        <img src="https://i.imgur.com/8Km9tLL.jpg" alt=""
-                class="rounded-full border-solid border-white border-2 -mt-3">
+        <img src="{{ urlDriveBandera }}" alt=""
+                class="rounded-full border-solid border-white border-2 -mt-3 z-10 w-[80px] h-[80px]">
     </div>
     <div class="text-center px-3 pb-6 pt-2">
         <h3 class="text-black text-sm bold font-sans">Olivia Dunham</h3>

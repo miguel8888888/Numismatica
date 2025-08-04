@@ -10,7 +10,7 @@ import { ImageComponent } from '../image/image.component';
 })
 export class HeaderComponent {
   @Input() bgHeader: string = 'bg-nav';
-  @Input() contentHeader: number = 1;
+  @Input() contentHeader: number = 2;
 
 
   // constructor() {
