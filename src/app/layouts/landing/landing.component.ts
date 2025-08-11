@@ -21,9 +21,9 @@ export class LandingComponent {
   ) {}
 
   ngOnInit() {
-    this.registrosService.obtenerRegistros().subscribe(
+    this.registrosService.obtenerRegistrosBilletes().subscribe(
       data => {
-        this.valores = data;
+        this.valores = data.registros;
         console.log('Datos obtenidos:', data);
       },
       error => {

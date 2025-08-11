@@ -6,11 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RegistrosService {
-  private apiUrl = 'https://catalogo-back.vercel.app/api/index';
+  private apiUrl = 'https://catalogo-back.vercel.app/api/';
 
   constructor(private http: HttpClient) {}
 
-  obtenerRegistros(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+  obtenerRegistrosPaises(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'paises/paises-select');
+  }
+  obtenerRegistrosBilletes(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'billetes/billetes-select-jPaises');
   }
 }
