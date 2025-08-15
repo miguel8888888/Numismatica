@@ -184,16 +184,41 @@
         
         <!--Card -->
         <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
-            <div *ngFor="let valor of valores">
+            <div *ngFor="let billete of billetes">
                 <app-card
-                    [anverso]="valor.anverso"
-                    [reverso]="valor.reverso"
-                    [bandera]="valor.bandera"
+                    [anverso]="billete.anverso"
+                    [reverso]="billete.reverso"
+                    [bandera]="billete.bandera"
                 >
                 </app-card>
             </div>
         </div>
         <!--/Card-->
+
+        <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+            <ol class="list-none">
+                <li *ngFor="let pais of paises" class="flex items-center mb-2">
+                    <img [src]="pais.bandera" alt="Bandera de {{ pais.nombre }}" class="w-6 h-6 mr-2 rounded shadow" />
+                    {{ pais.pais }}
+                </li>
+            </ol>
+        </div>
+
+        <div class="p-4">
+            <h2 class="text-lg font-bold mb-2">Agregar País</h2>
+            <form [formGroup]="formPais" (ngSubmit)="onSubmit()">
+                <div class="mb-4">
+                    <label for="pais" class="block text-sm font-medium text-gray-700">País</label>
+                    <input id="pais" formControlName="pais" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+                </div>
+                <div class="mb-4">
+                    <label for="bandera" class="block text-sm font-medium text-gray-700">Bandera</label>
+                    <input id="bandera" formControlName="bandera" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="URL de la bandera" />
+                    <img *ngIf="formPais.get('bandera')?.value" [src]="formPais.get('bandera')?.value" alt="Bandera" class="mt-2 h-16" />
+                </div>
+                <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded">Agregar</button>
+            </form>
+        </div>
 
         <!--Footer-->
         <app-footer></app-footer>

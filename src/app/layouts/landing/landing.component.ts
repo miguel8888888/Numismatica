@@ -1,4 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn  } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { CardComponent } from '../../components/card/card.component';
@@ -7,23 +8,39 @@ import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-landing',
-  imports: [HeaderComponent, FooterComponent, CardComponent, CommonModule],
+  imports: [
+    HeaderComponent,
+    FooterComponent,
+    CardComponent,
+    CommonModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
 
-  valores: any = [];
+  billetes: any = [];
+  paises: any = [];
+
+  formPais: FormGroup;
 
   constructor(
     private registrosService: RegistrosService,
     private cd: ChangeDetectorRef,
-  ) {}
+    private fb: FormBuilder,
+  ) {
+    this.formPais = this.fb.group({
+      pais: ['', Validators.required],
+      bandera: ['', Validators.required],
+    });
+
+  }
 
   ngOnInit() {
     this.registrosService.obtenerRegistrosBilletes().subscribe(
       data => {
-        this.valores = data.registros;
+        this.billetes = data.registros;
         console.log('Datos obtenidos:', data);
       },
       error => {
@@ -31,5 +48,31 @@ export class LandingComponent {
       }
     );
     this.cd.detectChanges();
+
+    this.registrosService.obtenerRegistrosPaises().subscribe(
+      data => {
+        this.paises = data.paises;
+        console.log('Datos de países obtenidos:', data);
+      },
+      error => {
+        console.error('Error al obtener los datos de países:', error);
+      }
+    );
+  }
+
+  onSubmit() {
+    if (this.formPais.valid) {
+      const nuevoPais = this.formPais.value;
+      console.log('Nuevo país:', nuevoPais);
+      this.registrosService.crearRegistroPais(nuevoPais).subscribe(
+        response => {
+          console.log('Registro agregado:', response);
+          this.formPais.reset();
+        },
+        error => {
+          console.error('Error al agregar el registro:', error);
+        }
+      );
+    }
   }
 }

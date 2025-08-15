@@ -10,10 +10,19 @@ export class RegistrosService {
 
   constructor(private http: HttpClient) {}
 
+  //BILLETES
+
+  obtenerRegistrosBilletes(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'billetes/billetes-select-jPaises');
+  }
+
+  //PAISES
+
   obtenerRegistrosPaises(): Observable<any> {
     return this.http.get<any>(this.apiUrl + 'paises/paises-select');
   }
-  obtenerRegistrosBilletes(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + 'billetes/billetes-select-jPaises');
+
+  crearRegistroPais(pais: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'paises/paises-insert', pais);
   }
 }
