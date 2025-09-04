@@ -38,20 +38,20 @@ export class LandingComponent {
   }
 
   ngOnInit() {
-    this.registrosService.obtenerRegistrosBilletes().subscribe(
-      data => {
-        this.billetes = data.registros;
-        console.log('Datos obtenidos:', data);
-      },
-      error => {
-        console.error('Error al obtener los datos:', error);
-      }
-    );
-    this.cd.detectChanges();
+    // this.registrosService.obtenerRegistrosBilletes().subscribe(
+    //   data => {
+    //     this.billetes = data.registros;
+    //     console.log('Datos obtenidos:', data);
+    //   },
+    //   error => {
+    //     console.error('Error al obtener los datos:', error);
+    //   }
+    // );
+    // this.cd.detectChanges();
 
     this.registrosService.obtenerRegistrosPaises().subscribe(
       data => {
-        this.paises = data.paises;
+        this.paises = data;
         console.log('Datos de países obtenidos:', data);
       },
       error => {
