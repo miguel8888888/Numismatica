@@ -26,10 +26,8 @@ export class RegistrosService {
   //PAISES
 
   obtenerRegistrosPaises(): Observable<any> {
-  const url = `${this.apiUrl}paises/?ngsw-bypass=true&ts=${Date.now()}`;
-  return this.http.get<any[]>(url);
-}
-
+    return this.http.get<any[]>(this.apiUrl + 'paises');
+  }
 
   crearRegistroPais(pais: any): Observable<any> {
     return this.http.post<any>(this.apiUrl + 'paises/', pais);
