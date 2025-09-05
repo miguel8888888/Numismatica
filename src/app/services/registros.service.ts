@@ -27,7 +27,7 @@ export class RegistrosService {
 
   // prueba sin cache
   obtenerRegistrosPaises(): Observable<any> {
-    return this.http.get<any[]>(this.apiUrl + 'paises');
+    return this.http.get<any>(this.apiUrl + 'paises');
   }
 
   crearRegistroPais(pais: any): Observable<any> {
