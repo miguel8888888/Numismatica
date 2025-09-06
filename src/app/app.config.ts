@@ -7,8 +7,12 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideHttpClient(),provideClientHydration(withEventReplay()), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          })]
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient(),
+    provideClientHydration(withEventReplay()),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: false, // <--- Desactiva temporalmente el Service Worker
+      registrationStrategy: 'registerWhenStable:30000'
+    })]
 };

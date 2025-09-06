@@ -49,6 +49,7 @@ export class LandingComponent {
     // );
     // this.cd.detectChanges();
 
+    console.log('Llamando a obtenerRegistrosPaises...');
     this.registrosService.obtenerRegistrosPaises().subscribe(
       data => {
         this.paises = data;
