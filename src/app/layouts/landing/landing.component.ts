@@ -48,11 +48,16 @@ export class LandingComponent {
     //   }
     // );
     // this.cd.detectChanges();
+    this.consultarPaises();
 
+  }
+  
+  consultarPaises() {
     console.log('Llamando a obtenerRegistrosPaises...');
     this.registrosService.obtenerRegistrosPaises().subscribe(
       data => {
         this.paises = data;
+        this.cd.detectChanges();
         console.log('Datos de países obtenidos:', data);
       },
       error => {
@@ -60,7 +65,7 @@ export class LandingComponent {
       }
     );
   }
-
+    
   onSubmit() {
     if (this.formPais.valid) {
       const nuevoPais = this.formPais.value;
@@ -69,6 +74,7 @@ export class LandingComponent {
         response => {
           console.log('Registro agregado:', response);
           this.formPais.reset();
+          this.consultarPaises(); // Actualiza la lista de países después de agregar uno nuevo
         },
         error => {
           console.error('Error al agregar el registro:', error);
