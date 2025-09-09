@@ -20,14 +20,14 @@ export class RegistrosService {
   //BILLETES
 
   obtenerRegistrosBilletes(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + 'billetes');
+    return this.http.get<any>(this.apiUrl + 'billetes/');
   }
 
   //PAISES
 
   // prueba sin cache
   obtenerRegistrosPaises(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + 'paises');
+    return this.http.get<any>(this.apiUrl + 'paises/');
   }
 
   crearRegistroPais(pais: any): Observable<any> {
