@@ -4,7 +4,7 @@
     <div class="min-h-screen flex flex-col">
         <!--Header-->
         <app-header
-        bgHeader="bg-green-500"
+        bgHeader="bg-[url(https://museobancodemexico.mx/imgs/fondos_slider/geometricos/Geometrico07.jpg)]"
         >
             
         </app-header>
@@ -188,7 +188,9 @@
                 <app-card
                     [anverso]="billete.anverso"
                     [reverso]="billete.reverso"
-                    [bandera]="billete.bandera"
+                    [bandera]="billete.pais_rel.bandera"
+                    [denominacion]="billete.denominacion"
+                    [precio]="billete.precio"
                 >
                 </app-card>
             </div>

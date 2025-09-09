@@ -34,22 +34,25 @@ export class LandingComponent {
       pais: ['', Validators.required],
       bandera: ['', Validators.required],
     });
-
+    // this.cd.detectChanges();
+    this.consultarPaises();
+    this.consultarBilletes();
   }
 
   ngOnInit() {
-    // this.registrosService.obtenerRegistrosBilletes().subscribe(
-    //   data => {
-    //     this.billetes = data.registros;
-    //     console.log('Datos obtenidos:', data);
-    //   },
-    //   error => {
-    //     console.error('Error al obtener los datos:', error);
-    //   }
-    // );
-    // this.cd.detectChanges();
-    this.consultarPaises();
-
+    
+  }
+  
+  consultarBilletes() {
+    this.registrosService.obtenerRegistrosBilletes().subscribe(
+      data => {
+        this.billetes = data;
+        console.log('Datos obtenidos:', data);
+      },
+      error => {
+        console.error('Error al obtener los datos:', error);
+      }
+    );
   }
   
   consultarPaises() {

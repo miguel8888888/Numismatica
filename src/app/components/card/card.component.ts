@@ -12,6 +12,8 @@ export class CardComponent implements OnInit {
   @Input() anverso: string = '';
   @Input() reverso: string = '';
   @Input() bandera: string = '';
+  @Input() precio: string = 'No definido';
+  @Input() denominacion: string = 'No Definido';
 
   urlDriveAnverso: string = '';
   urlDriveReverso: string = '';
@@ -40,4 +42,10 @@ export class CardComponent implements OnInit {
     return url;
   }
 
+  formatCOP(valor: number | string): string {
+    // Convierte a número si viene como string
+    const numero = typeof valor === 'string' ? Number(valor) : valor;
+    // Formatea con puntos cada tres dígitos y símbolo $
+    return '$' + numero.toLocaleString('es-CO', { minimumFractionDigits: 0 });
+  }
 }

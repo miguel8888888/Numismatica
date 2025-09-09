@@ -19,9 +19,9 @@ export class RegistrosService {
 
   //BILLETES
 
-  // obtenerRegistrosBilletes(): Observable<any> {
-  //   return this.http.get<any>(this.apiUrl + 'billetes/billetes-select-jPaises');
-  // }
+  obtenerRegistrosBilletes(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'billetes');
+  }
 
   //PAISES
 
