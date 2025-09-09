@@ -60,7 +60,6 @@ export class LandingComponent {
     this.registrosService.obtenerRegistrosPaises().subscribe(
       data => {
         this.paises = data;
-        this.cd.detectChanges();
         console.log('Datos de países obtenidos:', data);
       },
       error => {

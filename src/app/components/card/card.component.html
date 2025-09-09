@@ -1,23 +1,25 @@
 <div class="rounded rounded-t-lg overflow-hidden shadow max-w-xs my-3">
-    <div class="relative w-full h-[200px] bg-black p-2 flex items-center justify-center my-4">
-        <img
-            alt=""
-            class="object-contain mx-auto transition-opacity duration-[2000ms]"
-            [src]="urlDriveAnverso"
-            [style.opacity]="hover ? 0 : 1"
-            (mouseenter)="hover = true"
-            (mouseleave)="hover = false"
-            style="height: 180px; margin: 0 auto;"
-        />
-        <img
-            alt=""
-            class="object-contain mx-auto absolute transition-opacity duration-[2000ms]"
-            [src]="urlDriveReverso"
-            [style.opacity]="hover ? 1 : 0"
-            (mouseenter)="hover = true"
-            (mouseleave)="hover = false"
-            style="height: 180px; margin: 0 auto;"
-        />
+    <div class="relative w-full h-[200px] bg-black p-2 flex items-center justify-center mb-4">
+        <ng-container *ngIf="isBrowser">
+            <img
+                alt=""
+                class="object-contain mx-auto transition-opacity duration-[2000ms]"
+                [src]="urlDriveAnverso"
+                [style.opacity]="hover ? 0 : 1"
+                (mouseenter)="hover = true"
+                (mouseleave)="hover = false"
+                style="height: 180px; margin: 0 auto;"
+            />
+            <img
+                alt=""
+                class="object-contain mx-auto absolute transition-opacity duration-[2000ms]"
+                [src]="urlDriveReverso"
+                [style.opacity]="hover ? 1 : 0"
+                (mouseenter)="hover = true"
+                (mouseleave)="hover = false"
+                style="height: 180px; margin: 0 auto;"
+            />
+        </ng-container>
     </div>
     <div class="flex justify-center -mt-8">
         <img src="{{ urlDriveBandera }}" alt=""
@@ -31,12 +33,14 @@
     </div>
     <div class="flex justify-center pb-3 text-grey-dark">
         <div class="text-center mr-3 border-r pr-3">
-            <h2>34</h2>
-            <span>Photos</span>
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Ver Más
+            </button>
         </div>
         <div class="text-center">
-            <h2>42</h2>
-            <span>Friends</span>
+            <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Comprar
+            </button>
         </div>
     </div>
 </div>

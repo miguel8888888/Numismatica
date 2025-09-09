@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-// import { CurrencyPipe } from '@angular/common';
-import { Input } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, Input } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-card',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './card.component.html',
   styleUrl: './card.component.css'
 })
@@ -19,10 +19,14 @@ export class CardComponent implements OnInit {
   urlDriveReverso: string = '';
   urlDriveBandera: string = '';
   hover: boolean = false;
+  isBrowser: boolean = false;
 
-  constructor() {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
 
   ngOnInit(): void {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    
     this.urlDriveAnverso = this.limpiarUrl(this.anverso);
     this.urlDriveReverso = this.limpiarUrl(this.reverso);
     this.urlDriveBandera = this.limpiarUrl(this.bandera);
