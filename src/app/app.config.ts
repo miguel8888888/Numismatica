@@ -10,9 +10,5 @@ export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
-    provideClientHydration(withEventReplay()),
-    provideServiceWorker('ngsw-worker.js', {
-      enabled: false, // <--- Desactiva temporalmente el Service Worker
-      registrationStrategy: 'registerWhenStable:30000'
-    })]
+    provideClientHydration(withEventReplay())
 };
