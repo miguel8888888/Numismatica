@@ -1,0 +1,287 @@
+<div class="p-3 w-full">
+            <div class="flex flex-wrap -mx-3 mb-2">
+                <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                    <label class="block uppercase tracking-wide text-grey-darker text-xs font-light mb-1"
+                            for="grid-state">
+                        País
+                    </label>
+                    <!-- Selector personalizado de países con imágenes -->
+                    <div class="relative w-64">
+                      <button (click)="mostrarDropdown = !mostrarDropdown"
+                              class="w-full bg-white border px-4 py-2 rounded flex items-center justify-between">
+                        <ng-container *ngIf="paisSeleccionado; else placeholder">
+                            <span class="fi fi-{{paisSeleccionado.bandera}} flag-circle"></span>
+                            {{ paisSeleccionado.pais }}
+                        </ng-container>
+                        <ng-template #placeholder>
+                          <span class="text-gray-400">Selecciona un país</span>
+                        </ng-template>
+                        <span class="ml-auto">&#9662;</span>
+                      </button>
+                      <div *ngIf="mostrarDropdown" class="absolute z-10 w-full bg-white border mt-1 rounded shadow max-h-56 overflow-y-auto">
+                        <div
+                            (click)="seleccionarPais('Todos')"
+                            class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                            <span class="world">🌍</span>
+                          Todos
+                        </div>
+                        <div *ngFor="let pais of paises"
+                            (click)="seleccionarPais(pais)"
+                            class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                            <span class="fi fi-{{pais.bandera}} flag-circle"></span>
+                          <!-- <img [src]="pais.bandera" alt="" class="w-6 h-6 mr-2 rounded-full" /> -->
+                          {{ pais.pais }}
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-6 my-6">
+                <div class="flex flex-col items-center flex-1 min-w-[120px] max-w-[180px] mb-6 sm:mb-0 cursor-pointer"
+                    (click)="irAContinente('africa')">
+                    <i class="fa-solid fa-earth-africa text-[90px]"></i>
+                    <span class="mt-2 text-base font-medium">África</span>
+                </div>
+                <div class="flex flex-col items-center flex-1 min-w-[120px] max-w-[180px] mb-6 sm:mb-0 cursor-pointer"
+                    (click)="irAContinente('asia')">
+                    <i class="fa-solid fa-earth-asia text-[90px]"></i>
+                    <span class="mt-2 text-base font-medium">Asia</span>
+                </div>
+                <div class="flex flex-col items-center flex-1 min-w-[120px] max-w-[180px] mb-6 sm:mb-0 cursor-pointer"
+                    (click)="irAContinente('america')">
+                    <i class="fa-solid fa-earth-americas text-[90px]"></i>
+                    <span class="mt-2 text-base font-medium">América</span>
+                </div>
+                <div class="flex flex-col items-center flex-1 min-w-[120px] max-w-[180px] mb-6 sm:mb-0 cursor-pointer"
+                    (click)="irAContinente('europa')">
+                    <i class="fa-solid fa-earth-europe text-[90px]"></i>
+                    <span class="mt-2 text-base font-medium">Europa</span>
+                </div>
+                <div class="flex flex-col items-center flex-1 min-w-[120px] max-w-[180px] mb-6 sm:mb-0 cursor-pointer"
+                    (click)="irAContinente('oceania')">
+                    <i class="fa-solid fa-earth-oceania text-[90px]"></i>
+                    <span class="mt-2 text-base font-medium">Oceanía</span>
+                </div>
+            </div>
+
+            <div class="flex flex-1">
+                <!--/Sidebar-->
+                <!--Main-->
+                <main class="bg-white-medium flex-1 p-3 overflow-hidden">
+
+                    <div class="flex flex-col">
+                        <!-- Card Sextion Starts Here -->
+                        <div class="flex flex-1  flex-col md:flex-row lg:flex-row mx-2">
+                            <!--Outline Buttons form-->
+                            <div class="mb-2 border-solid border-gray-300 rounded border shadow-sm w-full md:w-1/2 lg:w-1/2">
+                                <div class="bg-gray-200 px-2 py-3 border-solid border-gray-300 border-b">
+                                    Outline Buttons
+                                </div>
+                                <div class="p-3">
+                                    <button class="bg-transparent hover:bg-blue-500 text-blue-dark font-semibold hover:text-white py-2 px-4 border border-blue hover:border-transparent rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-transparent hover:bg-green-500 text-green-dark font-semibold hover:text-white py-2 px-4 border border-green hover:border-transparent rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-transparent hover:bg-orange-500 text-orange-dark-800 font-semibold hover:text-white py-2 px-4 border border-orange-500 hover:border-transparent rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500hover:border-transparent rounded">
+                                        Button
+                                    </button>
+                                </div>
+                            </div>
+                            <!--/Outline Buttons -->
+
+                            <!--Solid Buttons-->
+                            <div class="mb-2 mx-2 border-solid border-gray-300 rounded border shadow-sm w-full md:w-1/2 lg:w-1/2">
+                                <div class="bg-gray-200 px-2 py-3 border-solid border-gray-300 border-b">
+                                    Solid Buttons
+                                </div>
+                                <div class="p-3">
+                                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-green-500 hover:bg-green-800 text-white font-bold py-2 px-4 rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-orange-500 hover:bg-orange-800 text-white font-bold py-2 px-4 rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-red-500 hover:bg-red-800 text-white font-bold py-2 px-4 rounded">
+                                        Button
+                                    </button>
+                                </div>
+                            </div>
+                            <!--/Solid Buttons-->
+                        </div>
+                        <!-- /Cards Section Ends Here -->
+
+                        <!--Card Section Starts Here-->
+                        <div class="flex flex-1  flex-col md:flex-row lg:flex-row mx-2">
+                            <!--Outline Buttons form-->
+                            <div class="mb-2 border-solid border-gray-200 rounded border shadow-sm w-full md:w-1/2 lg:w-1/2">
+                                <div class="bg-gray-200 px-2 py-3 border-solid border-gray-300 border-b">
+                                    Buttons Styles
+                                </div>
+                                <div class="p-3">
+                                    <button class="bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full">
+                                        Button
+                                    </button>
+                                    <button class="bg-green-500 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-full">
+                                        Button
+                                    </button>
+                                    <button class="bg-orange-500 hover:bg-orange-800 text-white font-bold py-2 px-4 rounded-full">
+                                        Button
+                                    </button>
+                                    <button class="bg-red-500 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full">
+                                        Button
+                                    </button>
+                                </div>
+                            </div>
+                            <!--/Outline Buttons -->
+
+                            <!--Solid Buttons-->
+                            <div class="mb-2 mx-2 border-solid border-gray-200 rounded border shadow-sm w-full md:w-1/2 lg:w-1/2">
+                                <div class="bg-gray-200 px-2 py-3 border-solid border-gray-300 border-b">
+                                    Button Bordered
+                                </div>
+                                <div class="p-3">
+                                    <button class="bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-4 border border-blue-800 rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-green-500 hover:bg-green-800 text-white font-bold py-2 px-4 border border-green-800 rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 border border-orange-800 rounded">
+                                        Button
+                                    </button>
+                                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-800 rounded">
+                                        Button
+                                    </button>
+                                </div>
+                            </div>
+                            <!--/Solid Buttons-->
+                        </div>
+                        <!--Card Section Ends Here-->
+                        <!--Card Section Starts Here-->
+                        <div class="flex flex-1  flex-col md:flex-row lg:flex-row mx-2">
+                            <!--Outline Buttons form-->
+                            <div class="mb-2 border-solid border-gray-200 rounded border shadow-sm w-full md:w-1/2 lg:w-1/2">
+                                <div class="bg-gray-200 px-2 py-3 border-solid border-gray-300 border-b">
+                                    Button Groups
+                                </div>
+                                <div class="p-3">
+                                    <div class="inline-flex">
+                                        <button class="bg-gray-200 hover:bg-gray-500 text-gray-900 font-bold py-2 px-4 rounded-l">
+                                            Prev
+                                        </button>
+                                        <button class="bg-gray-200 hover:bg-gray-500 text-gray-900 font-bold py-2 px-4 rounded-r">
+                                            Next
+                                        </button>
+                                    </div>
+
+                                    <div class="inline-flex">
+                                        <button class="bg-teal-200 hover:bg-teal-500 text-teal-900 font-bold py-2 px-4 rounded-l">
+                                            Prev
+                                        </button>
+                                        <button class="bg-teal-200 hover:bg-teal-500 text-teal-900 font-bold py-2 px-4 rounded-r">
+                                            Next
+                                        </button>
+                                    </div>
+
+
+                                    <div class="inline-flex">
+                                        <button class="bg-red-200 hover:bg-red-500 text-red-900 font-bold py-2 px-4 rounded-l">
+                                            Prev
+                                        </button>
+                                        <button class="bg-red-200 hover:bg-red-500 text-red-900 font-bold py-2 px-4 rounded-r">
+                                            Next
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/Outline Buttons -->
+
+                            <!--Solid Buttons-->
+                            <div class="mb-2 mx-2 border-solid border-gray-200 rounded border shadow-sm w-full md:w-1/2 lg:w-1/2">
+                                <div class="bg-gray-100 px-2 py-3 border-solid border-gray-200 border-b">
+                                    Miscellaneous
+                                </div>
+                                <div class="p-3">
+                                    <button class="bg-blue-500 hover:bg-blue-200 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-500 rounded">
+                                        3D Button
+                                    </button>
+                                    <button class="bg-white hover:bg-gray-500 text-gray-900 font-semibold py-2 px-4 border border-gray-200 rounded shadow">
+                                        Elevated Button
+                                    </button>
+                                    <button class="bg-gray-200 hover:bg-gray-500 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                                        <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20">
+                                            <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                                        </svg>
+                                        <span>Download</span>
+                                    </button>
+                                    <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
+                                        Button
+                                    </button>
+                                </div>
+                            </div>
+                            <!--/Solid Buttons-->
+                        </div>
+                        <!--Card Section Ends Here-->
+                    </div>
+                </main>
+                <!--/Main-->
+            </div>
+        
+            <!--Card -->
+            <div *ngIf="billetes.length > 0" class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+                <div *ngFor="let billete of billetes">
+                    <app-card
+                        [anverso]="billete.anverso"
+                        [reverso]="billete.reverso"
+                        [bandera]="billete.pais_rel.bandera"
+                        [denominacion]="billete.denominacion"
+                        [precio]="billete.precio"
+                    >
+                    </app-card>
+                </div>
+            </div>
+            <!--/Card-->
+
+            <!-- <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+                <ol class="list-none">
+                    <li *ngFor="let pais of paises" class="flex items-center mb-2">
+                        <img [src]="pais.bandera" alt="Bandera de {{ pais.bandera }}" class="w-6 h-6 mr-2 rounded-full shadow" />
+                        {{ pais.pais }}
+                    </li>
+                </ol>
+            </div> -->
+
+            <div class="p-4">
+                <h2 class="text-lg font-bold mb-2">Agregar País</h2>
+                <form [formGroup]="formPais" (ngSubmit)="onSubmit()">
+                    <div class="mb-4">
+                        <label for="pais" class="block text-sm font-medium text-gray-700">País</label>
+                        <input id="pais" formControlName="pais" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+                    </div>
+                    <!-- <div class="mb-4">
+                        <label for="bandera" class="block text-sm font-medium text-gray-700">Bandera</label>
+                        <input id="bandera" formControlName="bandera" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="URL de la bandera" />
+                        <img *ngIf="formPais.get('bandera')?.value" [src]="formPais.get('bandera')?.value" alt="Bandera" class="mt-2 h-16" />
+                    </div> -->
+                    <div class="mb-4">
+                        <label for="banderaFile" class="block text-sm font-medium text-gray-700">Bandera file</label>
+                        <input id="banderaFile" type="file" (change)="onBanderaFileChange($event)" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+                        <img *ngIf="formPais.get('bandera')?.value" [src]="formPais.get('bandera')?.value" alt="Bandera" class="mt-2 h-16" />
+                    </div>
+                    <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded">Agregar</button>
+                </form>
+            </div>
+
+            <!--Footer-->
+            <app-footer></app-footer>
+            <!--/footer-->
+        </div>

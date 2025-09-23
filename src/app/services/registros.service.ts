@@ -33,4 +33,9 @@ export class RegistrosService {
   crearRegistroPais(pais: any): Observable<any> {
     return this.http.post<any>(this.apiUrl + 'paises/', pais);
   }
+
+  // CARGAR IMAGENES
+  subirImagen(formData: FormData): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'upload/', formData);
+  }
 }

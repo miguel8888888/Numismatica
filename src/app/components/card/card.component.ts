@@ -29,7 +29,8 @@ export class CardComponent implements OnInit {
     
     this.urlDriveAnverso = this.limpiarUrl(this.anverso);
     this.urlDriveReverso = this.limpiarUrl(this.reverso);
-    this.urlDriveBandera = this.limpiarUrl(this.bandera);
+    console.log("this.bandera", this.bandera);
+    this.urlDriveBandera = this.bandera;
   }
 
   limpiarUrl(url: string): string {

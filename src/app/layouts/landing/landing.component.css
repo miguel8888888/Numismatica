@@ -1,0 +1,23 @@
+.flag-circle{
+     display: inline-block;
+    width: 40px;      /* tamaño del círculo */
+    height: 30px;
+    border-radius: 15%;   /* redondo */
+    border: 2px solid black;
+    background-size: cover;  /* que la bandera ocupe todo */
+    background-position: center;
+    margin-right: 8px;
+}
+
+.world{
+    display: flex;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid black;
+    font-size: 38px;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 4px;
+    margin-right: 8px;
+}
