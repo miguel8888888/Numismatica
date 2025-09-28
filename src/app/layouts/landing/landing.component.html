@@ -26,14 +26,21 @@
                     >
                         Países
                     </a>
-                    <!-- <a 
+                    <a 
+                        routerLink="/nosotros" 
+                        routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+                        class="py-4 px-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                    >
+                        Nosotros
+                    </a>
+                    <a 
                         routerLink="/billetes" 
                         routerLinkActive="text-blue-600 border-b-2 border-blue-600"
                         class="py-4 px-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
                     >
                         Billetes
                     </a>
-                    <a 
+                    <!-- <a 
                         routerLink="/configuracion" 
                         routerLinkActive="text-blue-600 border-b-2 border-blue-600"
                         class="py-4 px-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
@@ -52,4 +59,10 @@
         <!-- Footer -->
         <app-footer></app-footer>
     </div>
+
+    <!-- WhatsApp Button (siempre visible) -->
+    <app-whatsapp-button 
+        phoneNumber="573134350427"
+        message="¡Hola! Me interesa conocer más sobre sus billetes numismáticos. ¿Podrían brindarme más información?"
+    ></app-whatsapp-button>
 </div>

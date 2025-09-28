@@ -13,6 +13,14 @@ export const routes: Routes = [
         path: 'paises', 
         loadComponent: () => import('./views/paises/paises.component').then(c => c.PaisesComponent)
       },
+      { 
+        path: 'nosotros', 
+        loadComponent: () => import('./views/nosotros/nosotros.component').then(c => c.NosotrosComponent)
+      },
+      { 
+        path: 'billetes', 
+        loadComponent: () => import('./views/billetes/billetes.component').then(c => c.BilletesComponent)
+      },
     //   { 
     //     path: 'billetes', 
     //     loadComponent: () => import('./views/billetes/billetes.component').then(c => c.BilletesComponent)
