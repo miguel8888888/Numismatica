@@ -1,0 +1,135 @@
+<div class="container mx-auto px-4 py-8">
+    <!-- Encabezado -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">Catálogo de Países</h1>
+        <p class="text-gray-600">Explora nuestra colección de billetes organizados por países</p>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-3xl font-bold text-blue-600">{{ paises.length }}</div>
+            <div class="text-gray-600">Países Disponibles</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-3xl font-bold text-green-600">5</div>
+            <div class="text-gray-600">Continentes</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-3xl font-bold text-purple-600">{{ calcularTotalBilletes() }}</div>
+            <div class="text-gray-600">Billetes Totales</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-3xl font-bold text-orange-600">{{ calcularPaisesActivos() }}</div>
+            <div class="text-gray-600">Países Activos</div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Filtrar por Continente</h2>
+        <div class="flex flex-wrap gap-3">
+            <button 
+                (click)="filtrarPorContinente('todos')"
+                [class]="filtroActivo === 'todos' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+                class="px-4 py-2 rounded-lg transition-colors duration-200">
+                🌍 Todos
+            </button>
+            <button 
+                (click)="filtrarPorContinente('america')"
+                [class]="filtroActivo === 'america' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+                class="px-4 py-2 rounded-lg transition-colors duration-200">
+                🌎 América
+            </button>
+            <button 
+                (click)="filtrarPorContinente('europa')"
+                [class]="filtroActivo === 'europa' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+                class="px-4 py-2 rounded-lg transition-colors duration-200">
+                🌍 Europa
+            </button>
+            <button 
+                (click)="filtrarPorContinente('asia')"
+                [class]="filtroActivo === 'asia' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+                class="px-4 py-2 rounded-lg transition-colors duration-200">
+                🌏 Asia
+            </button>
+            <button 
+                (click)="filtrarPorContinente('africa')"
+                [class]="filtroActivo === 'africa' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+                class="px-4 py-2 rounded-lg transition-colors duration-200">
+                🌍 África
+            </button>
+            <button 
+                (click)="filtrarPorContinente('oceania')"
+                [class]="filtroActivo === 'oceania' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+                class="px-4 py-2 rounded-lg transition-colors duration-200">
+                🌏 Oceanía
+            </button>
+        </div>
+    </div>
+
+    <!-- Grilla de países con flag-icons -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Países ({{ paisesFiltrados.length }})</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <div *ngFor="let pais of paisesFiltrados" 
+                 (click)="verDetallesPais(pais)"
+                 class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-xl hover:border-blue-300 transition-all duration-300 cursor-pointer group transform hover:-translate-y-1">
+                <div class="flex flex-col items-center space-y-4">
+                    <!-- Bandera usando flag-icons -->
+                    <div class="relative">
+                        <ng-container *ngIf="pais.bandera && pais.bandera !== 'unknown'; else defaultFlag">
+                            <span class="fi fi-{{ pais.bandera }} text-6xl rounded-lg shadow-lg group-hover:scale-110 transition-transform duration-300"></span>
+                        </ng-container>
+                        <ng-template #defaultFlag>
+                            <div class="w-16 h-12 bg-gray-300 rounded-lg shadow-lg group-hover:scale-110 transition-transform duration-300 flex items-center justify-center text-2xl">
+                                🌍
+                            </div>
+                        </ng-template>
+                        <div class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            {{ contarBilletesPorPais(pais.id) }}
+                        </div>
+                    </div>
+                    
+                    <!-- Información del país -->
+                    <div class="text-center">
+                        <h3 class="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300 mb-1">
+                            {{ pais.pais }}
+                        </h3>
+                        <p class="text-sm text-gray-500">{{ pais.continente || 'Sin clasificar' }}</p>
+                        <div class="mt-2 flex items-center justify-center space-x-2">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {{ contarBilletesPorPais(pais.id) }} billetes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje cuando no hay países -->
+    <div *ngIf="paisesFiltrados.length === 0" class="text-center py-12">
+        <div class="text-6xl mb-4">🔍</div>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">No se encontraron países</h3>
+        <p class="text-gray-500">Intenta con un filtro diferente o verifica la conexión.</p>
+    </div>
+
+    <!-- Sección de acciones -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">¿No encuentras un país?</h2>
+        <p class="text-gray-600 mb-4">Agrega nuevos países directamente a nuestro catálogo numismático.</p>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button 
+                (click)="irARegistrarPaises()"
+                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-plus-circle mr-2"></i>
+                Registrar Nuevo País
+            </button>
+            <button class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-envelope mr-2"></i>
+                Solicitar País
+            </button>
+        </div>
+    </div>
+</div>

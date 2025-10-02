@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  fastAPI: 'https://backfastapi.up.railway.app/'
+  fastAPI: 'https://fastapi-railway-ihky.onrender.com/'
 };

@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class WhatsappButtonComponent {
   @Input() phoneNumber: string = '573134350427';
-  @Input() message: string = '¡Hola! Me interesa conocer más sobre sus billetes numismáticos. ¿Podrían brindarme más información?';
+  @Input() message: string = '¡Hola! Me interesa conocer más sobre sus billetes. ¿Podrían brindarme más información?';
 
   openWhatsApp() {
     const encodedMessage = encodeURIComponent(this.message);

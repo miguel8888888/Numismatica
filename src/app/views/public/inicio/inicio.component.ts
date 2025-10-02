@@ -1,10 +1,10 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule, Validators, FormsModule  } from '@angular/forms';
-import { FooterComponent } from '../../components/footer/footer.component';
-import { CardComponent } from '../../components/card/card.component';
-import { RegistrosService } from '../../services/registros.service';
+import { FooterComponent } from '../../../components/footer/footer.component';
+import { CardComponent } from '../../../components/card/card.component';
+import { RegistrosService } from '../../../services/registros.service';
 import {CommonModule} from '@angular/common';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-inicio',

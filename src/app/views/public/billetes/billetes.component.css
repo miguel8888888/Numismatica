@@ -1,0 +1,124 @@
+/* Estilos para el componente de billetes */
+
+/* Hover effects para las tarjetas de billetes */
+.group:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Efectos de transición suaves para las imágenes */
+.group img {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efecto de zoom sutil en hover */
+.group:hover img {
+  transform: scale(1.02);
+}
+
+/* Estilos para las banderas */
+.fi {
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Botones con efecto ripple */
+button {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+/* Estados de carga y error */
+.empty-state {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design improvements */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Animación para el overlay de hover */
+.group .absolute.inset-0 {
+  backdrop-filter: blur(1px);
+}
+
+/* Mejoras para el precio destacado */
+.absolute.top-3.right-3 {
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Estados de carga y error */
+.empty-state {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Mejoras de accesibilidad */
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+img:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Optimización para dispositivos táctiles */
+@media (hover: none) {
+  .group:hover img {
+    transform: none;
+  }
+  
+  .group:hover .opacity-0 {
+    opacity: 0;
+  }
+  
+  .group:hover .bg-opacity-0 {
+    background-color: transparent;
+  }
+}
+
+
+
+/* Mejoras para el grid responsive */
+@media (min-width: 1280px) {
+  .grid.xl\:grid-cols-4 > * {
+    max-width: 320px;
+  }
+}

@@ -1,0 +1,211 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <!-- Encabezado -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">Registrar Nuevo País</h1>
+        <p class="text-gray-600">Agrega un nuevo país a la base de datos numismática</p>
+      </div>
+      <button 
+        (click)="irAListaPaises()"
+        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+        <i class="fas fa-arrow-left mr-2"></i>
+        Volver a Países
+      </button>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="mensaje" 
+       [class]="tipoMensaje === 'success' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700'"
+       class="border px-4 py-3 rounded mb-6 transition-all duration-300">
+    <div class="flex items-center">
+      <i [class]="tipoMensaje === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle'" class="mr-2"></i>
+      {{ mensaje }}
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Formulario Principal -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Información del País</h2>
+        
+        <form [formGroup]="formularioPais" (ngSubmit)="onSubmit()" class="space-y-6">
+          <!-- Nombre del país -->
+          <div>
+            <label for="pais" class="block text-sm font-medium text-gray-700 mb-2">
+              Nombre del País *
+            </label>
+            <input 
+              id="pais" 
+              formControlName="pais" 
+              type="text" 
+              placeholder="Ej: Colombia, España, Brasil..."
+              class="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              [class.border-red-500]="obtenerErrorCampo('pais')"
+            />
+            <p *ngIf="obtenerErrorCampo('pais')" class="text-red-500 text-sm mt-1">
+              {{ obtenerErrorCampo('pais') }}
+            </p>
+          </div>
+
+          <!-- Código de bandera -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Código de Bandera *
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Selector de países comunes -->
+              <div>
+                <label for="codigoPais" class="block text-xs text-gray-500 mb-1">Seleccionar de la lista:</label>
+                <select 
+                  id="codigoPais"
+                  (change)="onCodigoPaisChange($event)"
+                  class="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <option value="">Selecciona un país...</option>
+                  <option *ngFor="let pais of codigosPaises" [value]="pais.codigo">
+                    {{ pais.nombre }} ({{ pais.codigo.toUpperCase() }})
+                  </option>
+                </select>
+              </div>
+              
+              <!-- Input manual -->
+              <div>
+                <label for="bandera" class="block text-xs text-gray-500 mb-1">O ingresar manualmente:</label>
+                <input 
+                  id="bandera" 
+                  formControlName="bandera" 
+                  type="text" 
+                  placeholder="Ej: co, es, br..."
+                  class="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  [class.border-red-500]="obtenerErrorCampo('bandera')"
+                />
+              </div>
+            </div>
+            
+            <!-- Vista previa de bandera -->
+            <div *ngIf="formularioPais.get('bandera')?.value" class="mt-3 p-3 bg-gray-50 rounded-lg">
+              <p class="text-sm text-gray-600 mb-2">Vista previa:</p>
+              <span class="fi fi-{{ formularioPais.get('bandera')?.value }} text-4xl"></span>
+              <span class="ml-3 text-sm text-gray-500">Código: {{ formularioPais.get('bandera')?.value?.toUpperCase() }}</span>
+            </div>
+            
+            <p *ngIf="obtenerErrorCampo('bandera')" class="text-red-500 text-sm mt-1">
+              {{ obtenerErrorCampo('bandera') }}
+            </p>
+          </div>
+
+          <!-- Continente -->
+          <div>
+            <label for="continente" class="block text-sm font-medium text-gray-700 mb-2">
+              Continente (Opcional)
+            </label>
+            <select 
+              id="continente" 
+              formControlName="continente"
+              class="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">Selecciona un continente...</option>
+              <option value="america">América</option>
+              <option value="europa">Europa</option>
+              <option value="asia">Asia</option>
+              <option value="africa">África</option>
+              <option value="oceania">Oceanía</option>
+            </select>
+          </div>
+
+          <!-- Descripción -->
+          <div>
+            <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-2">
+              Descripción (Opcional)
+            </label>
+            <textarea 
+              id="descripcion" 
+              formControlName="descripcion" 
+              rows="3"
+              placeholder="Información adicional sobre el país, su moneda, etc..."
+              class="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
+            <button 
+              type="submit" 
+              [disabled]="cargando"
+              class="flex-1 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center">
+              <i *ngIf="cargando" class="fas fa-spinner fa-spin mr-2"></i>
+              <i *ngIf="!cargando" class="fas fa-save mr-2"></i>
+              {{ cargando ? 'Guardando...' : 'Guardar País' }}
+            </button>
+            
+            <button 
+              type="button" 
+              (click)="limpiarFormulario()"
+              class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+              <i class="fas fa-eraser mr-2"></i>
+              Limpiar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Panel lateral -->
+    <div class="space-y-6">
+      <!-- Ayuda -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 class="text-lg font-semibold text-blue-800 mb-3">
+          <i class="fas fa-info-circle mr-2"></i>
+          Guía Rápida
+        </h3>
+        <ul class="text-sm text-blue-700 space-y-2">
+          <li class="flex items-start">
+            <i class="fas fa-check text-blue-500 mr-2 mt-0.5"></i>
+            El nombre debe ser único en la base de datos
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check text-blue-500 mr-2 mt-0.5"></i>
+            Usa códigos ISO de 2 letras (ej: co, es, us)
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check text-blue-500 mr-2 mt-0.5"></i>
+            El continente se asigna automáticamente si no lo especificas
+          </li>
+        </ul>
+      </div>
+
+      <!-- Países recientes -->
+      <div *ngIf="paisesRecientes.length > 0" class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">
+          <i class="fas fa-clock mr-2"></i>
+          Últimos Países Agregados
+        </h3>
+        <div class="space-y-2">
+          <div *ngFor="let pais of paisesRecientes" class="flex items-center p-2 bg-white rounded border">
+            <span class="fi fi-{{ pais.bandera }} mr-3"></span>
+            <span class="text-sm font-medium text-gray-700">{{ pais.pais }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas -->
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <h3 class="text-lg font-semibold text-green-800 mb-3">
+          <i class="fas fa-chart-bar mr-2"></i>
+          Estadísticas
+        </h3>
+        <div class="text-sm text-green-700">
+          <p class="flex justify-between mb-2">
+            <span>Países registrados:</span>
+            <span class="font-semibold">{{ paisesRecientes.length }}</span>
+          </p>
+          <p class="flex justify-between">
+            <span>Continentes:</span>
+            <span class="font-semibold">5</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

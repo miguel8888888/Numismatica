@@ -1,0 +1,188 @@
+<div class="space-y-6">
+  <!-- Encabezado -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Panel de Control</h1>
+      <p class="text-gray-600 mt-1">Bienvenido al panel administrativo de Numismática</p>
+    </div>
+    <div class="flex space-x-3">
+      <button (click)="exportarReporte()" 
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2">
+        <i class="fas fa-download"></i>
+        <span>Exportar Reporte</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tarjetas de estadísticas -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Total Países -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Países</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">{{ estadisticas.totalPaises }}</p>
+          <p class="text-sm text-green-600 mt-1">
+            <i class="fas fa-arrow-up mr-1"></i>
+            +2 este mes
+          </p>
+        </div>
+        <div class="bg-blue-100 rounded-lg p-3">
+          <i class="fas fa-globe-americas text-2xl text-blue-600"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Billetes -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Billetes</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">{{ estadisticas.totalBilletes }}</p>
+          <p class="text-sm text-green-600 mt-1">
+            <i class="fas fa-arrow-up mr-1"></i>
+            +15 esta semana
+          </p>
+        </div>
+        <div class="bg-green-100 rounded-lg p-3">
+          <i class="fas fa-money-bill-wave text-2xl text-green-600"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usuarios Activos -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Usuarios Activos</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">{{ estadisticas.usuariosActivos }}</p>
+          <p class="text-sm text-blue-600 mt-1">
+            <i class="fas fa-arrow-up mr-1"></i>
+            +5 hoy
+          </p>
+        </div>
+        <div class="bg-purple-100 rounded-lg p-3">
+          <i class="fas fa-users text-2xl text-purple-600"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ventas Hoy -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Consultas Hoy</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">{{ estadisticas.ventasHoy }}</p>
+          <p class="text-sm text-orange-600 mt-1">
+            <i class="fas fa-arrow-down mr-1"></i>
+            -3 vs ayer
+          </p>
+        </div>
+        <div class="bg-orange-100 rounded-lg p-3">
+          <i class="fas fa-chart-line text-2xl text-orange-600"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección principal -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Gráfico de actividad -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Actividad Mensual</h3>
+          <div class="flex space-x-2">
+            <button class="text-sm text-gray-500 hover:text-gray-700 px-3 py-1 rounded-md bg-gray-100">7d</button>
+            <button class="text-sm text-white bg-blue-600 px-3 py-1 rounded-md">30d</button>
+            <button class="text-sm text-gray-500 hover:text-gray-700 px-3 py-1 rounded-md bg-gray-100">90d</button>
+          </div>
+        </div>
+        
+        <!-- Simulación de gráfico -->
+        <div class="h-64 flex items-end justify-between space-x-2">
+          <div *ngFor="let valor of graficoDatos.datasets; let i = index" 
+               class="bg-blue-600 rounded-t-md flex-1 transition-all duration-300 hover:bg-blue-700"
+               [style.height.%]="(valor / 200) * 100">
+          </div>
+        </div>
+        <div class="flex justify-between mt-2 text-sm text-gray-500">
+          <span *ngFor="let label of graficoDatos.labels">{{ label }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actividad reciente -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">Actividad Reciente</h3>
+        <button (click)="verTodaActividad()" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+          Ver todo
+        </button>
+      </div>
+      
+      <div class="space-y-4">
+        <div *ngFor="let actividad of actividadReciente" class="flex items-start space-x-3">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+              <i [class]="actividad.icono + ' text-sm ' + actividad.color"></i>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-gray-900 font-medium">{{ actividad.mensaje }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ obtenerTiempoTranscurrido(actividad.fecha) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones rápidas -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-6">Acciones Rápidas</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <button (click)="irARegistrarPaises()" 
+              class="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+        <div class="bg-blue-100 rounded-lg p-2 group-hover:bg-blue-200">
+          <i class="fas fa-globe-americas text-blue-600"></i>
+        </div>
+        <div class="text-left">
+          <p class="font-medium text-gray-900">Agregar País</p>
+          <p class="text-sm text-gray-500">Registrar nuevo país</p>
+        </div>
+      </button>
+      
+      <button (click)="irAGestionarBilletes()" 
+              class="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-all duration-200 group">
+        <div class="bg-green-100 rounded-lg p-2 group-hover:bg-green-200">
+          <i class="fas fa-money-bill-wave text-green-600"></i>
+        </div>
+        <div class="text-left">
+          <p class="font-medium text-gray-900">Gestionar Billetes</p>
+          <p class="text-sm text-gray-500">Administrar catálogo</p>
+        </div>
+      </button>
+      
+      <button class="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-all duration-200 group">
+        <div class="bg-purple-100 rounded-lg p-2 group-hover:bg-purple-200">
+          <i class="fas fa-chart-bar text-purple-600"></i>
+        </div>
+        <div class="text-left">
+          <p class="font-medium text-gray-900">Generar Reporte</p>
+          <p class="text-sm text-gray-500">Estadísticas detalladas</p>
+        </div>
+      </button>
+      
+      <button class="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 group">
+        <div class="bg-orange-100 rounded-lg p-2 group-hover:bg-orange-200">
+          <i class="fas fa-cog text-orange-600"></i>
+        </div>
+        <div class="text-left">
+          <p class="font-medium text-gray-900">Configuración</p>
+          <p class="text-sm text-gray-500">Ajustes del sistema</p>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
