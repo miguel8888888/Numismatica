@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
 export interface LoginResponse {
@@ -35,7 +36,10 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
     // Verificar si hay un usuario guardado al inicializar
     this.loadStoredUser();
     
@@ -100,6 +104,8 @@ export class AuthService {
   }
 
   logout(): void {
+    console.log('🚪 AuthService - Iniciando proceso de logout...');
+    
     // Limpiar localStorage/sessionStorage
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
@@ -108,6 +114,13 @@ export class AuthService {
     
     // Actualizar el subject
     this.currentUserSubject.next(null);
+    
+    console.log('✅ AuthService - Sesión limpiada, redirigiendo...');
+    
+    // Redirigir al login
+    this.router.navigate(['/auth/login']).then(() => {
+      console.log('✅ AuthService - Redirección completada');
+    });
   }
 
   forgotPassword(email: string): Observable<ForgotPasswordResponse> {

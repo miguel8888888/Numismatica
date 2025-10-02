@@ -22,8 +22,16 @@ export const routes: Routes = [
         loadComponent: () => import('./views/public/nosotros/nosotros.component').then(c => c.NosotrosComponent)
       },
       { 
-        path: 'billetes', 
-        loadComponent: () => import('./views/public/billetes/billetes.component').then(c => c.BilletesComponent)
+        path: 'explorar-billetes', 
+        loadComponent: () => import('./views/public/explorar-billetes/explorar-billetes.component').then(c => c.ExplorarBilletesComponent)
+      },
+      { 
+        path: 'contacto', 
+        loadComponent: () => import('./views/public/contacto/contacto.component').then(c => c.ContactoComponent)
+      },
+      { 
+        path: 'destacados', 
+        loadComponent: () => import('./views/public/destacados/destacados.component').then(c => c.DestacadosComponent)
       },
     ]
   },

@@ -1,0 +1,299 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[400px]">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+      <p class="text-gray-600">Cargando billetes...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="flex justify-center items-center min-h-[400px]">
+    <div class="text-center bg-red-50 border border-red-200 rounded-lg p-8">
+      <div class="text-red-500 text-6xl mb-4">⚠️</div>
+      <h3 class="text-xl font-semibold text-red-800 mb-2">Error al cargar los billetes</h3>
+      <p class="text-red-600 mb-4">No se pudieron cargar los datos. Verifica tu conexión a internet.</p>
+      <button 
+        (click)="reintentarCarga()" 
+        class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-colors">
+        Reintentar
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading && !error">
+    <!-- Breadcrumb Navigation -->
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <button 
+            (click)="irAContinentes()"
+            [class]="vistaActual === 'continentes' ? 'text-blue-600 font-semibold' : 'text-gray-500 hover:text-blue-600'"
+            class="inline-flex items-center text-sm transition-colors">
+            🌍 Continentes
+          </button>
+        </li>
+        
+        <li *ngIf="continenteSeleccionado">
+          <div class="flex items-center">
+            <span class="mx-2 text-gray-400">/</span>
+            <button 
+              (click)="irAPaises()"
+              [class]="vistaActual === 'paises' ? 'text-blue-600 font-semibold' : 'text-gray-500 hover:text-blue-600'"
+              class="text-sm transition-colors">
+              {{ continenteSeleccionado }}
+            </button>
+          </div>
+        </li>
+        
+        <li *ngIf="paisSeleccionado">
+          <div class="flex items-center">
+            <span class="mx-2 text-gray-400">/</span>
+            <span class="text-sm text-blue-600 font-semibold">{{ paisSeleccionado }}</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Vista Continentes -->
+    <div *ngIf="vistaActual === 'continentes'">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">Explorar por Continentes</h1>
+      <p class="text-gray-600 mb-8">Descubre billetes de todo el mundo organizados por continentes</p>
+      
+      <div *ngIf="continentes.length === 0" class="text-center py-12">
+        <div class="text-gray-400 text-6xl mb-4">📄</div>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">No hay billetes registrados</h3>
+        <p class="text-gray-500">Aún no se han registrado billetes en la plataforma.</p>
+      </div>
+      
+      <div *ngIf="continentes.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let continente of continentes" 
+             (click)="seleccionarContinente(continente.nombre)"
+             class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2 overflow-hidden group">
+          
+          <div class="h-40 bg-gradient-to-br from-blue-400 via-blue-500 to-purple-600 flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            <span class="text-6xl filter drop-shadow-lg relative z-10">{{ continente.icono }}</span>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 group-hover:text-blue-600 transition-colors">
+              {{ continente.nombre }}
+            </h3>
+            <div class="space-y-3 text-sm text-gray-600">
+              <div class="flex justify-between items-center">
+                <span class="flex items-center">
+                  <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                  Países:
+                </span>
+                <span class="font-semibold text-gray-800">{{ continente.paises.size }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="flex items-center">
+                  <span class="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
+                  Billetes:
+                </span>
+                <span class="font-semibold text-gray-800">{{ continente.totalBilletes }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="flex items-center">
+                  <span class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
+                  Precio promedio:
+                </span>
+                <span class="font-semibold text-green-600">{{ formatCOP(continente.precioPromedio) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="px-6 pb-6">
+            <div class="bg-gray-50 group-hover:bg-blue-50 transition-colors rounded-lg p-3 text-center">
+              <span class="text-sm text-gray-600 group-hover:text-blue-600 font-medium">
+                Haz clic para explorar →
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista Países -->
+    <div *ngIf="vistaActual === 'paises'">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-4xl font-bold text-gray-800">Países de {{ continenteSeleccionado }}</h1>
+          <p class="text-gray-600 mt-2">Selecciona un país para ver sus billetes</p>
+        </div>
+        <button (click)="volver()" 
+                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors flex items-center">
+          ← Volver a continentes
+        </button>
+      </div>
+      
+      <div *ngIf="paisesPorContinente.length === 0" class="text-center py-12">
+        <div class="text-gray-400 text-6xl mb-4">🏴</div>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">No hay países con billetes</h3>
+        <p class="text-gray-500">No se encontraron billetes para este continente.</p>
+      </div>
+      
+      <div *ngIf="paisesPorContinente.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div *ngFor="let pais of paisesPorContinente" 
+             (click)="seleccionarPais(pais.nombre)"
+             class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-xl hover:border-blue-300 transition-all duration-300 cursor-pointer group transform hover:-translate-y-1">
+          
+          <div class="flex flex-col items-center space-y-4">
+            <!-- Bandera con contador -->
+            <div class="relative">
+              <span class="fi fi-{{ pais.codigoPais }} text-6xl rounded-lg shadow-lg group-hover:scale-110 transition-transform duration-300"></span>
+              <div class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {{ pais.totalBilletes }}
+              </div>
+            </div>
+            
+            <!-- Información del país -->
+            <div class="text-center">
+              <h3 class="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300 mb-1">
+                {{ pais.nombre }}
+              </h3>
+              <p class="text-sm text-gray-500 mb-2">{{ continenteSeleccionado }}</p>
+              <div class="flex flex-col items-center space-y-1">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  {{ pais.totalBilletes }} billetes
+                </span>
+                <span class="text-xs text-gray-500">
+                  Promedio: {{ formatCOP(pais.precioPromedio) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista Billetes -->
+    <div *ngIf="vistaActual === 'billetes'">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800">Billetes de {{ paisSeleccionado }}</h1>
+          <p class="text-gray-600 mt-1">{{ continenteSeleccionado }}</p>
+        </div>
+        <button (click)="volver()" 
+                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors flex items-center">
+          ← Volver a países
+        </button>
+      </div>
+      
+      <!-- Filtros rápidos -->
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
+        <div class="flex flex-wrap gap-4 items-center">
+          <div class="flex-1 min-w-64">
+            <label for="filtroTexto" class="block text-sm font-medium text-gray-700 mb-1">Buscar por denominación</label>
+            <input 
+              id="filtroTexto"
+              [(ngModel)]="filtroTexto"
+              (ngModelChange)="onFiltroTextoChange()"
+              placeholder="Ej: 100, mil pesos..."
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+          </div>
+          
+          <div class="min-w-80">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Rango de precios</label>
+            <div class="px-3">
+              <!-- Valores del rango -->
+              <div class="flex justify-between items-center mb-3">
+                <div class="text-center">
+                  <div class="text-xs text-gray-500 mb-1">Mínimo</div>
+                  <span class="text-sm font-semibold text-blue-600">{{ formatCOP(precioMinimoSeleccionado) }}</span>
+                </div>
+                <span class="text-gray-400 mx-3">━</span>
+                <div class="text-center">
+                  <div class="text-xs text-gray-500 mb-1">Máximo</div>
+                  <span class="text-sm font-semibold text-green-600">{{ formatCOP(precioMaximoSeleccionado) }}</span>
+                </div>
+              </div>
+              
+              <!-- Container del slider dual -->
+              <div class="relative mb-3">
+                <!-- Track de fondo -->
+                <div class="h-2 bg-gray-200 rounded-lg relative">
+                  <!-- Track activo (rango seleccionado) -->
+                  <div 
+                    class="absolute h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-lg transition-all duration-200 ease-out"
+                    [style.left.%]="getLeftPercentage()"
+                    [style.width.%]="getWidthPercentage()">
+                  </div>
+                </div>
+                
+                <!-- Slider para precio mínimo -->
+                <input 
+                  type="range"
+                  [min]="precioMinimo"
+                  [max]="precioMaximo"
+                  [step]="1000"
+                  [(ngModel)]="precioMinimoSeleccionado"
+                  (input)="onPrecioMinimoChange($event)"
+                  class="range-slider range-min absolute top-0 w-full h-2 appearance-none cursor-pointer bg-transparent"
+                  style="z-index: 2;">
+                
+                <!-- Slider para precio máximo -->
+                <input 
+                  type="range"
+                  [min]="precioMinimo"
+                  [max]="precioMaximo"
+                  [step]="1000"
+                  [(ngModel)]="precioMaximoSeleccionado"
+                  (input)="onPrecioMaximoChange($event)"
+                  class="range-slider range-max absolute top-0 w-full h-2 appearance-none cursor-pointer bg-transparent"
+                  style="z-index: 1;">
+              </div>
+              
+              <!-- Etiquetas de los extremos -->
+              <div class="flex justify-between">
+                <span class="text-xs text-gray-400">{{ formatCOP(precioMinimo) }}</span>
+                <span class="text-xs text-gray-400">{{ formatCOP(precioMaximo) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-end">
+            <button 
+              (click)="limpiarFiltros()"
+              class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors text-sm">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+        
+        <div class="mt-4 text-sm text-gray-600">
+          Mostrando <span class="font-semibold">{{ billetesFiltrados.length }}</span> 
+          de <span class="font-semibold">{{ obtenerTotalBilletesPais() }}</span> billetes
+        </div>
+      </div>
+      
+      <!-- Mensaje cuando no hay billetes -->
+      <div *ngIf="billetesFiltrados.length === 0" class="text-center py-12">
+        <div class="text-gray-400 text-6xl mb-4">🔍</div>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">No se encontraron billetes</h3>
+        <p class="text-gray-500" *ngIf="tienesFiltrosActivos()">
+          Intenta ajustar los filtros de búsqueda.
+        </p>
+        <p class="text-gray-500" *ngIf="!tienesFiltrosActivos()">
+          Este país aún no tiene billetes registrados.
+        </p>
+      </div>
+      
+      <!-- Grid de billetes usando el componente Card existente -->
+      <div *ngIf="billetesFiltrados.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div *ngFor="let billete of billetesFiltrados">
+          <app-card
+            [anverso]="billete.anverso"
+            [reverso]="billete.reverso"
+            [bandera]="billete.pais_rel.bandera"
+            [denominacion]="billete.denominacion"
+            [precio]="billete.precio">
+          </app-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

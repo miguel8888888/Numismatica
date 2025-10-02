@@ -1,0 +1,391 @@
+/* Animaciones personalizadas */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Componente principal */
+.container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Breadcrumb mejorado */
+nav[aria-label="Breadcrumb"] {
+  animation: slideInRight 0.4s ease-out;
+}
+
+nav[aria-label="Breadcrumb"] button:hover {
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Cards de continentes */
+.group {
+  position: relative;
+  overflow: hidden;
+}
+
+.group::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg);
+  transition: all 0.6s;
+  opacity: 0;
+}
+
+.group:hover::before {
+  animation: shimmer 0.8s ease-out;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+/* Efectos de hover mejorados */
+.group:hover {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Loading spinner personalizado */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Gradientes personalizados */
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+/* Estados de error mejorados */
+.error-state {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Transiciones suaves para filtros */
+.filter-input {
+  transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .grid {
+    gap: 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Estados de carga de imágenes */
+.flag-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Mejorar la accesibilidad */
+.group:focus {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+button:focus {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* Efectos de texto */
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Mejoras para el componente card cuando se usa dentro */
+::ng-deep app-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+::ng-deep app-card > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Indicadores de estado */
+.status-indicator {
+  position: relative;
+}
+
+.status-indicator::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background: #10B981;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Animaciones de entrada escalonadas */
+.staggered-entry > *:nth-child(1) { animation-delay: 0.1s; }
+.staggered-entry > *:nth-child(2) { animation-delay: 0.2s; }
+.staggered-entry > *:nth-child(3) { animation-delay: 0.3s; }
+.staggered-entry > *:nth-child(4) { animation-delay: 0.4s; }
+.staggered-entry > *:nth-child(5) { animation-delay: 0.5s; }
+.staggered-entry > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* Mejoras para controles de formulario */
+select, input {
+  transition: all 0.2s ease;
+}
+
+select:hover, input:hover {
+  border-color: #9CA3AF;
+}
+
+select:focus, input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Tooltips personalizados */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.tooltip:hover::before {
+  opacity: 1;
+  visibility: visible;
+  bottom: calc(100% + 8px);
+}
+
+/* Estilos para el slider de rango dual */
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: transparent;
+  outline: none;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+}
+
+/* Track (fondo del slider) - hacer invisible ya que usamos nuestro propio track */
+.range-slider::-webkit-slider-track {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 8px;
+}
+
+.range-slider::-moz-range-track {
+  background: transparent;
+  height: 8px;
+  border: none;
+}
+
+/* Thumbs (puntos deslizables) - estilos base */
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  pointer-events: all;
+  position: relative;
+  margin-top: -6px; /* Centrar verticalmente con el track */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  pointer-events: all;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  -moz-border-radius: 50%;
+}
+
+/* Estilos específicos para el slider mínimo (azul) */
+.range-min {
+  z-index: 3;
+}
+
+.range-min::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.range-min::-webkit-slider-thumb:hover {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+.range-min::-webkit-slider-thumb:active {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.6);
+}
+
+.range-min::-moz-range-thumb {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.range-min::-moz-range-thumb:hover {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+/* Estilos específicos para el slider máximo (verde) */
+.range-max {
+  z-index: 2;
+}
+
+.range-max::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.range-max::-webkit-slider-thumb:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+.range-max::-webkit-slider-thumb:active {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.6);
+}
+
+.range-max::-moz-range-thumb {
+  background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.range-max::-moz-range-thumb:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* Cuando los thumbs están muy cerca, ajustar z-index dinámicamente */
+.range-min:focus {
+  z-index: 4;
+}
+
+.range-max:focus {
+  z-index: 4;
+}
+
+/* Container del rango para evitar conflictos de z-index */
+.range-container {
+  position: relative;
+  height: 8px;
+}
+
+/* Animaciones para el track del rango */
+.range-track {
+  transition: all 0.3s ease;
+}
+
+/* Estilos responsive para el slider */
+@media (max-width: 640px) {
+  .range-slider::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .range-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+}

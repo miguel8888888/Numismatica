@@ -30,16 +30,19 @@
         </h3>
         <p class="mt-2 font-sans font-light text-grey-700">Denominacion: {{ denominacion }} </p>
     </div>
-    <div class="flex justify-center pb-3 text-grey-dark">
-        <div class="text-center mr-3 border-r pr-3">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Ver Más
-            </button>
-        </div>
-        <div class="text-center">
-            <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                Comprar
-            </button>
+    <!-- Botones de acción -->
+    <div class="px-3 pb-3">
+        <div class="flex gap-2">
+          <button 
+            (click)="comprarBillete()"
+            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-1 text-sm">
+            🛒 Comprar
+          </button>
+          <button 
+            (click)="verMasInformacion()"
+            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-1 text-sm">
+            ℹ️ Info
+          </button>
         </div>
     </div>
 </div>

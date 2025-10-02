@@ -59,7 +59,8 @@ export class LoginComponent implements OnInit {
           if (response.access_token || response.token) {
             console.log('🔐 Token recibido, redirigiendo...');
             // Redirigir a la URL original o al dashboard por defecto
-            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
+            const returnUrl = this.route?.snapshot?.queryParams?.['returnUrl'] || '/admin/dashboard';
+            console.log('🧭 Redirigiendo a:', returnUrl);
             this.router.navigateByUrl(returnUrl);
           } else {
             this.error = 'Error en la respuesta del servidor. Token no encontrado.';

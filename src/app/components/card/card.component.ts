@@ -53,4 +53,16 @@ export class CardComponent implements OnInit {
     // Formatea con puntos cada tres dígitos y símbolo $
     return '$' + numero.toLocaleString('es-CO', { minimumFractionDigits: 0 });
   }
+
+  comprarBillete(): void {
+    console.log('Comprando billete:', this.denominacion);
+    // Aquí irá la lógica de compra
+    alert(`¡Interesado en comprar el billete ${this.denominacion}! Funcionalidad en desarrollo.`);
+  }
+
+  verMasInformacion(): void {
+    console.log('Viendo más información del billete:', this.denominacion);
+    // Aquí irá la lógica para mostrar más información
+    alert(`Información detallada del billete ${this.denominacion}. Funcionalidad en desarrollo.`);
+  }
 }

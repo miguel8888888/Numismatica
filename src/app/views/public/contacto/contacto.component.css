@@ -1,0 +1,47 @@
+/* Estilos personalizados para el componente de contacto */
+
+.container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efectos hover para iconos */
+.bg-blue-100:hover, .bg-green-100:hover, 
+.bg-purple-100:hover, .bg-orange-100:hover {
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+/* Focus mejorado para inputs */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Animación del botón de envío */
+button[type="submit"] {
+  position: relative;
+  overflow: hidden;
+}
+
+button[type="submit"]:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

@@ -48,6 +48,38 @@
   animation: slideIn 0.3s ease-out;
 }
 
+/* Dropdown Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.15s ease-out forwards;
+}
+
+/* Chevron rotation */
+.rotate-180 {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* User menu hover effects */
+.user-info-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.user-info-badge:hover {
+  background-color: #e5e7eb;
+  transform: scale(1.02);
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .sidebar {
