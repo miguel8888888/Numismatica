@@ -1,0 +1,416 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Encabezado -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div class="px-6 py-8 sm:px-8">
+        <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+          <!-- Avatar con carga de imagen -->
+          <div class="flex-shrink-0">
+            <app-image-upload
+              [currentImageUrl]="user?.profile_image"
+              [userId]="user?.user_id || user?.id"
+              [userName]="user?.nombre || ''"
+              [defaultAvatar]="defaultAvatar"
+              (imageUploaded)="onImageUploaded($event)"
+              (imageRemoved)="onImageRemoved()"
+            ></app-image-upload>
+          </div>
+          
+          <!-- Información básica -->
+          <div class="flex-1 text-center md:text-left">
+            <h1 class="text-3xl font-bold text-gray-900">{{ user?.nombre || 'Usuario' }}</h1>
+            <p class="text-lg text-gray-600">{{ user?.email }}</p>
+            <p class="text-sm text-gray-500 mt-1">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                ✅ Cuenta activa
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Información Personal -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div class="px-6 py-6 sm:px-8">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold text-gray-900">📝 Información Personal</h2>
+          <div class="flex space-x-2">
+            <!-- Botones de Test (temporales) -->
+            <button
+              (click)="testAuthStatus()"
+              class="inline-flex items-center px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+              title="Test de estado de autenticación"
+            >
+              🔍 Test Auth
+            </button>
+            <button
+              (click)="testSupabase()"
+              class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+              title="Test de conexión con Supabase"
+            >
+              📦 Test Supabase
+            </button>
+            <button
+              *ngIf="!editingProfile"
+              (click)="startEditingProfile()"
+              class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+            >
+              ✏️ Editar
+            </button>
+          </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        <div *ngIf="profileSuccess" class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div class="flex items-center">
+            <span class="text-green-500 mr-2">✅</span>
+            <span class="text-green-700 text-sm">{{ profileSuccess }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="profileError" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div class="flex items-center">
+            <span class="text-red-500 mr-2">❌</span>
+            <span class="text-red-700 text-sm">{{ profileError }}</span>
+          </div>
+        </div>
+
+        <!-- Formulario de perfil -->
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Nombre -->
+            <div>
+              <label for="nombre" class="block text-sm font-medium text-gray-700 mb-2">
+                Nombre <span class="text-red-500">*</span>
+              </label>
+              <input
+                id="nombre"
+                type="text"
+                formControlName="nombre"
+                [readonly]="!editingProfile"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class.bg-gray-50]="!editingProfile"
+                [class.border-red-500]="isFieldInvalid(profileForm, 'nombre')"
+                placeholder="Ingresa tu nombre"
+              >
+              <p *ngIf="isFieldInvalid(profileForm, 'nombre')" class="mt-2 text-sm text-red-600">
+                {{ getFieldError(profileForm, 'nombre') }}
+              </p>
+            </div>
+
+            <!-- Apellidos -->
+            <div>
+              <label for="apellidos" class="block text-sm font-medium text-gray-700 mb-2">
+                Apellidos <span class="text-red-500">*</span>
+              </label>
+              <input
+                id="apellidos"
+                type="text"
+                formControlName="apellidos"
+                [readonly]="!editingProfile"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class.bg-gray-50]="!editingProfile"
+                [class.border-red-500]="isFieldInvalid(profileForm, 'apellidos')"
+                placeholder="Ingresa tus apellidos"
+              >
+              <p *ngIf="isFieldInvalid(profileForm, 'apellidos')" class="mt-2 text-sm text-red-600">
+                {{ getFieldError(profileForm, 'apellidos') }}
+              </p>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                Correo electrónico <span class="text-red-500">*</span>
+              </label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                [readonly]="!editingProfile"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class.bg-gray-50]="!editingProfile"
+                [class.border-red-500]="isFieldInvalid(profileForm, 'email')"
+                placeholder="tu@email.com"
+              >
+              <p *ngIf="isFieldInvalid(profileForm, 'email')" class="mt-2 text-sm text-red-600">
+                {{ getFieldError(profileForm, 'email') }}
+              </p>
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+              <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
+                Teléfono
+              </label>
+              <input
+                id="telefono"
+                type="tel"
+                formControlName="telefono"
+                [readonly]="!editingProfile"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class.bg-gray-50]="!editingProfile"
+                [class.border-red-500]="isFieldInvalid(profileForm, 'telefono')"
+                placeholder="+57 300 123 4567"
+              >
+              <p *ngIf="isFieldInvalid(profileForm, 'telefono')" class="mt-2 text-sm text-red-600">
+                {{ getFieldError(profileForm, 'telefono') }}
+              </p>
+            </div>
+
+            <!-- Ciudad -->
+            <div>
+              <label for="ciudad" class="block text-sm font-medium text-gray-700 mb-2">
+                Ciudad
+              </label>
+              <input
+                id="ciudad"
+                type="text"
+                formControlName="ciudad"
+                [readonly]="!editingProfile"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class.bg-gray-50]="!editingProfile"
+                placeholder="Tu ciudad"
+              >
+            </div>
+
+            <!-- Dirección -->
+            <div class="md:col-span-2">
+              <label for="direccion" class="block text-sm font-medium text-gray-700 mb-2">
+                Dirección
+              </label>
+              <input
+                id="direccion"
+                type="text"
+                formControlName="direccion"
+                [readonly]="!editingProfile"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class.bg-gray-50]="!editingProfile"
+                placeholder="Tu dirección completa"
+              >
+            </div>
+
+            <!-- País -->
+            <div>
+              <label for="pais" class="block text-sm font-medium text-gray-700 mb-2">
+                País
+              </label>
+              <input
+                id="pais"
+                type="text"
+                formControlName="pais"
+                [readonly]="!editingProfile"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class.bg-gray-50]="!editingProfile"
+                placeholder="Tu país"
+              >
+            </div>
+          </div>
+
+          <!-- Botones de acción para perfil -->
+          <div *ngIf="editingProfile" class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              (click)="cancelEditingProfile()"
+              class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors duration-200"
+            >
+              ❌ Cancelar
+            </button>
+            <button
+              type="submit"
+              [disabled]="loading || !profileForm.valid"
+              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 flex items-center"
+            >
+              <span *ngIf="!loading">💾 Guardar cambios</span>
+              <span *ngIf="loading" class="flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Guardando...
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Sección de Cambio de Contraseña -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div class="px-6 py-6 sm:px-8">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold text-gray-900">🔒 Cambiar Contraseña</h2>
+          <button
+            *ngIf="!editingPassword"
+            (click)="startEditingPassword()"
+            class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+          >
+            🔑 Cambiar contraseña
+          </button>
+        </div>
+
+        <!-- Mensajes de estado -->
+        <div *ngIf="passwordSuccess" class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div class="flex items-center">
+            <span class="text-green-500 mr-2">✅</span>
+            <span class="text-green-700 text-sm">{{ passwordSuccess }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="passwordError" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div class="flex items-center">
+            <span class="text-red-500 mr-2">❌</span>
+            <span class="text-red-700 text-sm">{{ passwordError }}</span>
+          </div>
+        </div>
+
+        <!-- Información de seguridad -->
+        <div *ngIf="!editingPassword" class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div class="flex items-start">
+            <span class="text-blue-500 mr-2 mt-0.5">🛡️</span>
+            <div class="text-blue-700 text-sm">
+              <p class="font-medium mb-1">Seguridad de la cuenta</p>
+              <p>Tu contraseña está protegida y encriptada. Para cambiarla necesitarás proporcionar tu contraseña actual.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de cambio de contraseña -->
+        <form *ngIf="editingPassword" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+          
+          <!-- Información de seguridad -->
+          <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div class="flex items-start">
+              <span class="text-yellow-500 mr-2 mt-0.5">🔒</span>
+              <div class="text-yellow-700 text-sm">
+                <p class="font-medium mb-2">Requisitos de seguridad:</p>
+                <ul class="space-y-1 text-xs">
+                  <li>• Mínimo 8 caracteres</li>
+                  <li>• Al menos 1 minúscula (a-z)</li>
+                  <li>• Al menos 1 mayúscula (A-Z)</li>
+                  <li>• Al menos 1 número (0-9)</li>
+                  <li>• Al menos 1 símbolo especial (&#64;$!%*?&amp;.)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            
+            <!-- Contraseña actual -->
+            <div>
+              <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-2">
+                Contraseña actual <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="currentPassword"
+                  [type]="showCurrentPassword ? 'text' : 'password'"
+                  formControlName="currentPassword"
+                  class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class.border-red-500]="isFieldInvalid(passwordForm, 'currentPassword')"
+                  placeholder="Ingresa tu contraseña actual"
+                  autocomplete="current-password"
+                >
+                <button
+                  type="button"
+                  (click)="togglePasswordVisibility('current')"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <span class="text-lg">{{ showCurrentPassword ? '👁️' : '🙈' }}</span>
+                </button>
+              </div>
+              <p *ngIf="isFieldInvalid(passwordForm, 'currentPassword')" class="mt-2 text-sm text-red-600">
+                {{ getFieldError(passwordForm, 'currentPassword') }}
+              </p>
+            </div>
+
+            <!-- Nueva contraseña -->
+            <div>
+              <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">
+                Nueva contraseña <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="newPassword"
+                  [type]="showNewPassword ? 'text' : 'password'"
+                  formControlName="newPassword"
+                  class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class.border-red-500]="isFieldInvalid(passwordForm, 'newPassword')"
+                  placeholder="Ingresa tu nueva contraseña"
+                  autocomplete="new-password"
+                >
+                <button
+                  type="button"
+                  (click)="togglePasswordVisibility('new')"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <span class="text-lg">{{ showNewPassword ? '👁️' : '🙈' }}</span>
+                </button>
+              </div>
+              <p *ngIf="isFieldInvalid(passwordForm, 'newPassword')" class="mt-2 text-sm text-red-600">
+                {{ getFieldError(passwordForm, 'newPassword') }}
+              </p>
+            </div>
+
+            <!-- Confirmar nueva contraseña -->
+            <div>
+              <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">
+                Confirmar nueva contraseña <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="confirmPassword"
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class.border-red-500]="isFieldInvalid(passwordForm, 'confirmPassword')"
+                  placeholder="Confirma tu nueva contraseña"
+                  autocomplete="new-password"
+                >
+                <button
+                  type="button"
+                  (click)="togglePasswordVisibility('confirm')"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <span class="text-lg">{{ showConfirmPassword ? '👁️' : '🙈' }}</span>
+                </button>
+              </div>
+              <p *ngIf="isFieldInvalid(passwordForm, 'confirmPassword')" class="mt-2 text-sm text-red-600">
+                {{ getFieldError(passwordForm, 'confirmPassword') }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Botones de acción para contraseña -->
+          <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              (click)="cancelEditingPassword()"
+              class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors duration-200"
+            >
+              ❌ Cancelar
+            </button>
+            <button
+              type="submit"
+              [disabled]="loading || !passwordForm.valid"
+              class="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 flex items-center"
+            >
+              <span *ngIf="!loading">🔑 Cambiar contraseña</span>
+              <span *ngIf="loading" class="flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Cambiando...
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

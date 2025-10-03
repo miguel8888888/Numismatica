@@ -48,6 +48,10 @@ export const routes: Routes = [
       {
         path: 'forgot-password',
         loadComponent: () => import('./views/auth/forgot-password/forgot-password.component').then(c => c.ForgotPasswordComponent)
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () => import('./views/auth/reset-password/reset-password.component').then(c => c.ResetPasswordComponent)
       }
     ]
   },
@@ -66,6 +70,10 @@ export const routes: Routes = [
       { 
         path: 'registrar-paises', 
         loadComponent: () => import('./views/admin/registrar-paises/registrar-paises.component').then(c => c.RegistrarPaisesComponent)
+      },
+      { 
+        path: 'profile', 
+        loadComponent: () => import('./views/admin/profile/profile.component').then(c => c.ProfileComponent)
       },
       // Futuras rutas administrativas
       // { path: 'usuarios', loadComponent: ... },

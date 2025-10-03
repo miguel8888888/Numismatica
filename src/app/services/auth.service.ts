@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
@@ -23,6 +23,26 @@ export interface LoginResponse {
 export interface ForgotPasswordResponse {
   success: boolean;
   message: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  nombre: string;
+  telefono?: string;
+  ciudad?: string;
+  direccion?: string;
+  pais?: string;
+  profile_image?: string | null;
+  profile_image_path?: string | null;
+  es_administrador?: boolean;
+  fecha_creacion?: string;
+  role?: string;
+}
+
+export interface ProfileImageData {
+  profile_image: string;
+  profile_image_path: string;
 }
 
 @Injectable({
@@ -105,15 +125,7 @@ export class AuthService {
 
   logout(): void {
     console.log('🚪 AuthService - Iniciando proceso de logout...');
-    
-    // Limpiar localStorage/sessionStorage
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
-    sessionStorage.removeItem(this.tokenKey);
-    sessionStorage.removeItem(this.userKey);
-    
-    // Actualizar el subject
-    this.currentUserSubject.next(null);
+    this.clearSession();
     
     console.log('✅ AuthService - Sesión limpiada, redirigiendo...');
     
@@ -121,6 +133,21 @@ export class AuthService {
     this.router.navigate(['/auth/login']).then(() => {
       console.log('✅ AuthService - Redirección completada');
     });
+  }
+
+  private clearSession(): void {
+    // Limpiar localStorage/sessionStorage (solo en el navegador)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(this.tokenKey);
+      localStorage.removeItem(this.userKey);
+      sessionStorage.removeItem(this.tokenKey);
+      sessionStorage.removeItem(this.userKey);
+    }
+    
+    // Actualizar el subject
+    this.currentUserSubject.next(null);
+    
+    console.log('🧹 Sesión limpiada (tokens y datos eliminados)');
   }
 
   forgotPassword(email: string): Observable<ForgotPasswordResponse> {
@@ -144,7 +171,7 @@ export class AuthService {
       return false;
     }
 
-    // Verificar si el token ha expirado (opcional)
+    // Verificar si el token ha expirado
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const expiry = payload.exp * 1000; // JWT expiry is in seconds
@@ -157,14 +184,28 @@ export class AuthService {
         timeLeft: Math.round((expiry - Date.now()) / 1000 / 60) + ' minutos'
       });
       
-      return isValid;
+      // Si el token ha expirado, limpiar la sesión
+      if (!isValid) {
+        console.log('⏰ Token expirado, limpiando sesión...');
+        this.clearSession();
+        return false;
+      }
+      
+      return true;
     } catch (error) {
       console.error('❌ Error al verificar token:', error);
+      // Si hay error parseando el token, limpiar la sesión
+      this.clearSession();
       return false;
     }
   }
 
   getToken(): string | null {
+    // Verificar si estamos en el navegador
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    
     const localToken = localStorage.getItem(this.tokenKey);
     const sessionToken = sessionStorage.getItem(this.tokenKey);
     const token = localToken || sessionToken;
@@ -183,6 +224,11 @@ export class AuthService {
   }
 
   private setSession(authResult: LoginResponse & { token?: string }, rememberMe: boolean): void {
+    // Verificar si estamos en el navegador
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
     const storage = rememberMe ? localStorage : sessionStorage;
     
     // Usar access_token o token según lo que esté disponible
@@ -199,10 +245,162 @@ export class AuthService {
   }
 
   private loadStoredUser(): void {
-    const userStr = localStorage.getItem(this.userKey) || sessionStorage.getItem(this.userKey);
-    if (userStr && this.isAuthenticated()) {
-      const user = JSON.parse(userStr);
-      this.currentUserSubject.next(user);
+    // Verificar si estamos en el navegador antes de acceder a localStorage
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const userStr = localStorage.getItem(this.userKey) || sessionStorage.getItem(this.userKey);
+      if (userStr && this.isAuthenticated()) {
+        const user = JSON.parse(userStr);
+        this.currentUserSubject.next(user);
+      }
     }
+  }
+
+  // Métodos para gestión de perfil
+  updateProfile(profileData: any): Observable<any> {
+    console.log('📝 Actualizando perfil del usuario...');
+    
+    return this.http.put(`${this.apiUrl}auth/perfil/`, profileData).pipe(
+      tap((response: any) => {
+        console.log('✅ Perfil actualizado exitosamente:', response);
+        
+        // Actualizar los datos del usuario en el storage y subject
+        if (response.user || response) {
+          const currentUser = this.getCurrentUser();
+          const userData = response.user || response;
+          const updatedUser = { ...currentUser, ...userData };
+          
+          // Actualizar en el storage que esté siendo usado (solo en el navegador)
+          if (typeof window !== 'undefined') {
+            const userStr = JSON.stringify(updatedUser);
+            if (localStorage.getItem(this.userKey)) {
+              localStorage.setItem(this.userKey, userStr);
+            } else if (sessionStorage.getItem(this.userKey)) {
+              sessionStorage.setItem(this.userKey, userStr);
+            }
+          }
+          
+          // Actualizar el subject
+          this.currentUserSubject.next(updatedUser);
+        }
+      })
+    );
+  }
+
+  // Método específico para actualizar imagen de perfil
+  updateProfileImage(imageData: ProfileImageData | { profile_image: null, profile_image_path: null }): Observable<any> {
+    console.log('🖼️ Actualizando imagen de perfil:', imageData);
+    
+    return this.http.put(`${this.apiUrl}auth/perfil/`, imageData).pipe(
+      tap((response: any) => {
+        console.log('✅ Imagen de perfil actualizada:', response);
+        
+        // Actualizar los datos del usuario con la nueva imagen
+        if (response.user || response) {
+          const currentUser = this.getCurrentUser();
+          const userData = response.user || response;
+          const updatedUser = { 
+            ...currentUser, 
+            profile_image: imageData.profile_image,
+            profile_image_path: imageData.profile_image_path
+          };
+          
+          // Actualizar en el storage (solo en el navegador)
+          if (typeof window !== 'undefined') {
+            const userStr = JSON.stringify(updatedUser);
+            if (localStorage.getItem(this.userKey)) {
+              localStorage.setItem(this.userKey, userStr);
+            } else if (sessionStorage.getItem(this.userKey)) {
+              sessionStorage.setItem(this.userKey, userStr);
+            }
+          }
+          
+          // Actualizar el subject
+          this.currentUserSubject.next(updatedUser);
+        }
+      }),
+      catchError((error) => {
+        console.error('❌ Error actualizando imagen de perfil:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  changePassword(passwordData: { currentPassword: string, newPassword: string }): Observable<any> {
+    console.log('🔒 Cambiando contraseña del usuario...', {
+      hasCurrentPassword: !!passwordData.currentPassword,
+      hasNewPassword: !!passwordData.newPassword,
+      currentPasswordLength: passwordData.currentPassword?.length,
+      newPasswordLength: passwordData.newPassword?.length
+    });
+    
+    const requestBody = {
+      current_password: passwordData.currentPassword,
+      new_password: passwordData.newPassword,
+      confirm_new_password: passwordData.newPassword  // El backend requiere confirmación
+    };
+    
+    console.log('📡 Enviando request de cambio de contraseña:', {
+      url: `${this.apiUrl}auth/cambiar-password/`,
+      method: 'PUT',
+      body: {
+        current_password: '[OCULTA - ' + passwordData.currentPassword?.length + ' caracteres]',
+        new_password: '[OCULTA - ' + passwordData.newPassword?.length + ' caracteres]',
+        confirm_new_password: '[OCULTA - ' + passwordData.newPassword?.length + ' caracteres]',
+        bodyKeys: Object.keys(requestBody)
+      }
+    });
+    
+    return this.http.put(`${this.apiUrl}auth/cambiar-password/`, requestBody).pipe(
+      tap((response: any) => {
+        console.log('✅ Contraseña cambiada exitosamente:', response);
+      }),
+      catchError((error: any) => {
+        console.log('❌ Error al cambiar contraseña:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          message: error.message,
+          url: error.url
+        });
+        return throwError(() => error);
+      })
+    );
+    
+    // Opción 2: Si existe un endpoint específico, descomenta esto:
+    // return this.http.put(`${this.apiUrl}auth/change-password/`, passwordData).pipe(
+    //   tap((response: any) => {
+    //     console.log('✅ Contraseña cambiada exitosamente:', response);
+    //   })
+    // );
+  }
+
+  getUserProfile(): Observable<any> {
+    console.log('👤 Obteniendo datos del perfil del usuario...');
+    
+    return this.http.get(`${this.apiUrl}auth/perfil/`).pipe(
+      tap((response: any) => {
+        console.log('✅ Perfil obtenido exitosamente:', response);
+        
+        // Actualizar los datos del usuario si vienen en la respuesta
+        if (response.user || response) {
+          const userData = response.user || response;
+          const currentUser = this.getCurrentUser();
+          const updatedUser = { ...currentUser, ...userData };
+          
+          // Actualizar en el storage que esté siendo usado (solo en el navegador)
+          if (typeof window !== 'undefined') {
+            const userStr = JSON.stringify(updatedUser);
+            if (localStorage.getItem(this.userKey)) {
+              localStorage.setItem(this.userKey, userStr);
+            } else if (sessionStorage.getItem(this.userKey)) {
+              sessionStorage.setItem(this.userKey, userStr);
+            }
+          }
+          
+          // Actualizar el subject
+          this.currentUserSubject.next(updatedUser);
+        }
+      })
+    );
   }
 }

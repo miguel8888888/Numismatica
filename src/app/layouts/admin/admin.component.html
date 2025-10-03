@@ -28,7 +28,15 @@
     <!-- User Profile -->
     <div class="p-4 border-t border-gray-200">
       <div class="flex items-center space-x-3">
-        <img [src]="usuarioActual.avatar" alt="Avatar" class="w-8 h-8 rounded-full">
+        <!-- Avatar en sidebar -->
+        <div *ngIf="usuarioActual.profile_image; else initialsAvatarSidebar">
+          <img [src]="usuarioActual.profile_image" alt="Avatar" class="w-8 h-8 rounded-full object-cover">
+        </div>
+        <ng-template #initialsAvatarSidebar>
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <span class="text-white text-sm font-bold">{{ getInitials(usuarioActual.nombre) }}</span>
+          </div>
+        </ng-template>
         <div [class]="sidebarOpen ? 'block' : 'hidden'" class="flex-1">
           <p class="text-sm font-medium text-gray-900">{{ usuarioActual.nombre }}</p>
           <p class="text-xs text-gray-500">{{ usuarioActual.email }}</p>
@@ -76,7 +84,15 @@
             <div class="relative" data-dropdown-container>
               <button (click)="toggleDropdown(); $event.stopPropagation()" 
                       class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors p-1 rounded-lg hover:bg-gray-100">
-                <img [src]="usuarioActual.avatar" alt="Avatar" class="w-8 h-8 rounded-full border-2 border-gray-200">
+                <!-- Avatar en header -->
+                <div *ngIf="usuarioActual.profile_image; else initialsAvatarHeader">
+                  <img [src]="usuarioActual.profile_image" alt="Avatar" class="w-8 h-8 rounded-full object-cover border-2 border-gray-200">
+                </div>
+                <ng-template #initialsAvatarHeader>
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-gray-200">
+                    <span class="text-white text-xs font-bold">{{ getInitials(usuarioActual.nombre) }}</span>
+                  </div>
+                </ng-template>
                 <i class="fas fa-chevron-down text-xs transition-transform" [class.rotate-180]="dropdownOpen"></i>
               </button>
               

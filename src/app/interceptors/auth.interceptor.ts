@@ -16,13 +16,29 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // Agregar token JWT a las requests del admin
     const token = this.authService.getToken();
+    const isAdminReq = this.isAdminRequest(request.url);
+    const isFastApiReq = request.url.includes('fastapi-railway-ihky.onrender.com');
     
-    if (token && this.isAdminRequest(request.url)) {
+    console.log('🔐 Interceptor - Request DETALLADA:', {
+      url: request.url,
+      isAdminRequest: isAdminReq,
+      isFastApiRequest: isFastApiReq,
+      hasToken: !!token,
+      tokenLength: token?.length,
+      tokenPreview: token ? token.substring(0, 50) + '...' : 'No token'
+    });
+    
+    // Si es request a FastAPI Y tenemos token, agregarlo siempre
+    if (token && (isAdminReq || isFastApiReq)) {
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+      console.log('✅ Token agregado a la request FastAPI');
+    } else if ((isAdminReq || isFastApiReq) && !token) {
+      console.log('❌ Request de admin/FastAPI sin token!');
     }
 
     return next.handle(request).pipe(
@@ -43,11 +59,26 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private isAdminRequest(url: string): boolean {
     // Verificar si la request es hacia endpoints que requieren autenticación
-    return url.includes('/admin/') || 
+    const isAdmin = url.includes('/admin/') || 
            url.includes('/auth/logout') || 
            url.includes('/auth/refresh') ||
+           url.includes('/auth/perfil') ||
+           url.includes('auth/perfil') ||  // Sin barra inicial
            url.includes('/usuarios/') ||
+           url.includes('/users/') ||
            url.includes('registrar-paises') ||
-           url.includes('billetes') && !url.includes('public');
+           (url.includes('billetes') && !url.includes('public'));
+    
+    console.log('🔍 Verificando si es request de admin:', {
+      url: url,
+      isAdminRequest: isAdmin,
+      checks: {
+        hasAuthPerfil: url.includes('/auth/perfil'),
+        hasAuthPerfilNoSlash: url.includes('auth/perfil'),
+        fullUrl: url
+      }
+    });
+    
+    return isAdmin;
   }
 }

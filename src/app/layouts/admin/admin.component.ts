@@ -16,6 +16,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   usuarioActual: any = {
     nombre: 'Cargando...',
     email: '',
+    profile_image: null,
     avatar: 'https://ui-avatars.com/api/?name=User&background=083FA8&color=fff'
   };
   dropdownOpen = false;
@@ -28,6 +29,12 @@ export class AdminComponent implements OnInit, OnDestroy {
       icono: 'fas fa-tachometer-alt',
       ruta: '/admin/dashboard',
       activo: true
+    },
+    {
+      titulo: 'Mi Perfil',
+      icono: 'fas fa-user-circle',
+      ruta: '/admin/profile',
+      activo: false
     },
     {
       titulo: 'Registrar Países',
@@ -80,7 +87,8 @@ export class AdminComponent implements OnInit, OnDestroy {
           nombre: user.nombre || 'Administrador',
           email: user.email,
           role: user.role,
-          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nombre || 'Admin')}&background=083FA8&color=fff`
+          profile_image: user.profile_image,
+          avatar: this.getAvatarUrl(user)
         };
         console.log('👤 Usuario cargado en admin:', this.usuarioActual);
       }
@@ -95,7 +103,8 @@ export class AdminComponent implements OnInit, OnDestroy {
           nombre: user.nombre || 'Administrador',
           email: user.email,
           role: user.role,
-          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nombre || 'Admin')}&background=083FA8&color=fff`
+          profile_image: user.profile_image,
+          avatar: this.getAvatarUrl(user)
         };
       }
     }
@@ -121,6 +130,31 @@ export class AdminComponent implements OnInit, OnDestroy {
       }
     };
     document.addEventListener('click', this.outsideClickHandler);
+  }
+
+  private getAvatarUrl(user: any): string {
+    // Si el usuario tiene imagen de perfil, usarla
+    if (user.profile_image) {
+      return user.profile_image;
+    }
+    
+    // Si no, generar URL con iniciales
+    const userName = user.nombre || 'Admin';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=083FA8&color=fff&size=128`;
+  }
+
+  getInitials(nombre: string): string {
+    if (!nombre || nombre.trim() === '') {
+      return 'U'; // Usuario por defecto
+    }
+    
+    const names = nombre.trim().split(' ');
+    if (names.length === 1) {
+      return names[0].charAt(0).toUpperCase();
+    }
+    
+    // Tomar primera letra del nombre y primera letra del apellido
+    return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
   }
 
   toggleSidebar(): void {
@@ -207,17 +241,12 @@ export class AdminComponent implements OnInit, OnDestroy {
     console.log('👤 Navegando al perfil del usuario...');
     this.closeDropdown();
     
-    // TODO: Implementar navegación al perfil
-    // this.router.navigate(['/admin/perfil']);
-    
     try {
-      await this.notificationService.info(
-        'La funcionalidad de perfil está en desarrollo.\n\nPronto podrás:\n\n• Gestionar tu información personal\n• Cambiar tu contraseña\n• Configurar preferencias\n• Subir foto de perfil',
-        '🚧 Perfil - En Desarrollo'
-      );
+      this.router.navigate(['/admin/profile']);
+      console.log('✅ Navegación al perfil exitosa');
     } catch (error) {
-      console.error('Error mostrando notificación de perfil:', error);
-      // Crear notificación manual si el servicio falla
+      console.error('❌ Error navegando al perfil:', error);
+      await this.notificationService.error('Error al acceder al perfil', 'Error de Navegación');
       this.mostrarNotificacionManual(
         'La funcionalidad de perfil está en desarrollo.',
         'info'
