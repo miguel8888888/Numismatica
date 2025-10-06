@@ -253,6 +253,7 @@ select:focus, input:focus {
   top: 50%;
   transform: translateY(-50%);
   width: 100%;
+  margin-top: 4px; /* Pequeño ajuste para mejor posicionamiento */
 }
 
 /* Track (fondo del slider) - hacer invisible ya que usamos nuestro propio track */
@@ -380,12 +381,142 @@ select:focus, input:focus {
 /* Estilos responsive para el slider */
 @media (max-width: 640px) {
   .range-slider::-webkit-slider-thumb {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
+    margin-top: -10px; /* Ajustar para el thumb más grande */
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
   }
   
   .range-slider::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Hacer el área de toque más grande sin afectar visual */
+  .range-slider {
+    height: 44px; /* Área de toque de 44px (recomendado) */
+    margin: 5px 0; /* Compensar la altura extra */
+  }
+}
+
+/* Pantallas muy pequeñas (móviles en landscape o muy estrechos) */
+@media (max-width: 480px) {
+  .range-slider::-webkit-slider-thumb {
+    width: 32px;
+    height: 32px;
+    margin-top: -12px;
+    border: 4px solid #ffffff;
+  }
+  
+  .range-slider::-moz-range-thumb {
+    width: 32px;
+    height: 32px;
+    border: 4px solid #ffffff;
+  }
+}
+
+/* Mejorar la accesibilidad táctil */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevenir que el contenido se salga en pantallas pequeñas */
+@media (max-width: 768px) {
+  .range-container {
+    min-width: 0;
+    width: 100%;
+  }
+  
+  /* Asegurar que las etiquetas no se superpongan */
+  .flex-1 {
+    min-width: 0;
+  }
+
+  /* Layout responsive para los filtros */
+  .bg-white.rounded-lg.shadow-sm {
+    padding: 1rem;
+  }
+
+  /* Stack vertical en móviles */
+  .flex.flex-col.md\\:flex-row {
+    align-items: stretch;
+  }
+
+  /* Asegurar que el botón no se estire demasiado */
+  button {
+    max-height: 44px;
+  }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 480px) {
+  /* Reducir padding en móviles muy pequeños */
+  .bg-white.rounded-lg.shadow-sm {
+    padding: 0.75rem;
+  }
+
+  /* Hacer el texto más legible en pantallas pequeñas */
+  .text-xs {
+    font-size: 0.7rem;
+  }
+
+  .text-sm {
+    font-size: 0.8rem;
+  }
+}
+
+/* Estilos para el breadcrumb responsive */
+nav[aria-label="Breadcrumb"] {
+  /* Scroll suave en móviles */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+nav[aria-label="Breadcrumb"]::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* Mejorar el área de toque de los botones del breadcrumb */
+nav[aria-label="Breadcrumb"] button {
+  min-height: 32px;
+  min-width: 32px;
+}
+
+/* Gradiente de desvanecimiento para indicar scroll */
+.breadcrumb-container {
+  position: relative;
+}
+
+.breadcrumb-container::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(to right, transparent, #f9fafb);
+  pointer-events: none;
+}
+
+/* Estilos para los botones de navegación responsive */
+@media (max-width: 640px) {
+  /* Asegurar que los títulos no se corten */
+  h1 {
+    line-height: 1.2;
+  }
+  
+  /* Mejorar el espaciado de los botones */
+  button {
+    min-height: 44px;
   }
 }
