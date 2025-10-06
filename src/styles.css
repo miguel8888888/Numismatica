@@ -1,1 +1,41 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Fix para que la aplicación ocupe toda la pantalla en cualquier dispositivo */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Asegurar que los contenedores principales no se encojan */
+.min-h-screen {
+  min-height: 100vh !important;
+}
+
+/* Fix para iOS Safari viewport */
+@supports (-webkit-touch-callout: none) {
+  body {
+    min-height: -webkit-fill-available;
+  }
+  
+  .min-h-screen {
+    min-height: -webkit-fill-available !important;
+  }
+}

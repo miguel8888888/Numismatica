@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 })
 export class AdminComponent implements OnInit, OnDestroy {
   sidebarOpen = true;
+  isMobile = false;
   usuarioActual: any = {
     nombre: 'Cargando...',
     email: '',
@@ -22,6 +23,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   dropdownOpen = false;
   private userSubscription?: Subscription;
   private outsideClickHandler!: (event: Event) => void;
+  private resizeHandler!: () => void;
 
   menuItems = [
     {
@@ -29,12 +31,6 @@ export class AdminComponent implements OnInit, OnDestroy {
       icono: 'fas fa-tachometer-alt',
       ruta: '/admin/dashboard',
       activo: true
-    },
-    {
-      titulo: 'Mi Perfil',
-      icono: 'fas fa-user-circle',
-      ruta: '/admin/profile',
-      activo: false
     },
     {
       titulo: 'Registrar Países',
@@ -111,14 +107,19 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     // Setup para cerrar dropdown al hacer click fuera
     this.setupOutsideClickHandler();
+    
+    // Detectar tamaño de pantalla
+    this.checkScreenSize();
+    this.setupResizeHandler();
   }
 
   ngOnDestroy(): void {
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
     }
-    // Remover el event listener del documento
+    // Remover event listeners
     document.removeEventListener('click', this.outsideClickHandler);
+    window.removeEventListener('resize', this.resizeHandler);
   }
 
   private setupOutsideClickHandler(): void {
@@ -155,6 +156,51 @@ export class AdminComponent implements OnInit, OnDestroy {
     
     // Tomar primera letra del nombre y primera letra del apellido
     return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+  }
+
+  // Métodos para responsividad
+  private checkScreenSize(): void {
+    if (typeof window !== 'undefined') {
+      this.isMobile = window.innerWidth < 1024; // lg breakpoint
+      if (this.isMobile) {
+        this.sidebarOpen = false; // Cerrar sidebar en móviles por defecto
+      }
+    }
+  }
+
+  private setupResizeHandler(): void {
+    if (typeof window !== 'undefined') {
+      this.resizeHandler = () => {
+        const wasMobile = this.isMobile;
+        this.checkScreenSize();
+        
+        // Si cambió de móvil a desktop, abrir sidebar
+        if (wasMobile && !this.isMobile) {
+          this.sidebarOpen = true;
+        }
+        // Si cambió de desktop a móvil, cerrar sidebar
+        else if (!wasMobile && this.isMobile) {
+          this.sidebarOpen = false;
+        }
+      };
+      window.addEventListener('resize', this.resizeHandler);
+    }
+  }
+
+  getSidebarClasses(): string {
+    if (this.isMobile) {
+      return this.sidebarOpen ? 
+        'fixed left-0 top-0 h-full w-64 transform translate-x-0' : 
+        'fixed left-0 top-0 h-full w-64 transform -translate-x-full';
+    } else {
+      return this.sidebarOpen ? 'w-64' : 'w-16';
+    }
+  }
+
+  closeSidebar(): void {
+    if (this.isMobile) {
+      this.sidebarOpen = false;
+    }
   }
 
   toggleSidebar(): void {
