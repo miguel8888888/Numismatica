@@ -9,50 +9,62 @@
         <!--/Header-->
 
         <!-- Navigation Menu -->
-        <nav class="bg-white shadow-sm border-b">
+        <nav class="bg-white shadow-sm border-b relative">
             <div class="max-w-7xl mx-auto px-4">
-                <div class="flex space-x-8">
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
                     <a 
-                        routerLink="/inicio" 
+                        *ngFor="let item of menuItems"
+                        [routerLink]="item.ruta" 
                         routerLinkActive="text-blue-600 border-b-2 border-blue-600"
                         class="py-4 px-2 text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
                     >
-                        <i class="fas fa-home mr-2 text-sm"></i>
-                        Inicio
+                        <i [class]="item.icono" class="mr-2 text-sm"></i>
+                        {{ item.titulo }}
                     </a>
-                    <a 
-                        routerLink="/explorar-billetes" 
-                        routerLinkActive="text-blue-600 border-b-2 border-blue-600"
-                        class="py-4 px-2 text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
+                </div>
+
+                <!-- Mobile Menu Header -->
+                <div class="md:hidden flex items-center justify-between py-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-coins text-blue-600 text-xl mr-2"></i>
+                        <span class="text-lg font-bold text-gray-800">Menú</span>
+                    </div>
+                    <button 
+                        (click)="toggleMobileMenu()"
+                        class="text-gray-600 hover:text-gray-800 focus:outline-none menu-toggle"
                     >
-                        <i class="fas fa-search mr-2 text-sm"></i>
-                        Explorar
-                    </a>
-                    <a 
-                        routerLink="/nosotros" 
-                        routerLinkActive="text-blue-600 border-b-2 border-blue-600"
-                        class="py-4 px-2 text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
-                    >
-                        <i class="fas fa-users mr-2 text-sm"></i>
-                        Nosotros
-                    </a>
-                    <a 
-                        routerLink="/destacados" 
-                        routerLinkActive="text-blue-600 border-b-2 border-blue-600"
-                        class="py-4 px-2 text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
-                    >
-                        <i class="fas fa-star mr-2 text-sm"></i>
-                        Destacados
-                    </a>
-                    <!-- <a 
-                        routerLink="/configuracion" 
-                        routerLinkActive="text-blue-600 border-b-2 border-blue-600"
-                        class="py-4 px-2 text-gray-700 hover:text-blue-600 transition-colors duration-200"
-                    >
-                        Configuración
-                    </a> -->
+                        <i [class]="mobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'" class="text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Dropdown -->
+                <div 
+                    *ngIf="mobileMenuOpen"
+                    class="md:hidden absolute top-full left-0 right-0 bg-white border-t shadow-lg z-50 mobile-menu-dropdown"
+                >
+                    <div class="px-4 py-2 space-y-1">
+                        <a 
+                            *ngFor="let item of menuItems"
+                            [routerLink]="item.ruta"
+                            routerLinkActive="bg-blue-50 text-blue-600"
+                            (click)="closeMobileMenu()"
+                            class="mobile-menu-item flex items-center py-3 px-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-200 rounded-lg"
+                        >
+                            <i [class]="item.icono" class="mr-3 text-sm w-4 flex-shrink-0"></i>
+                            <span class="text-sm font-medium">{{ item.titulo }}</span>
+                        </a>
+                    </div>
                 </div>
             </div>
+            
+            <!-- Overlay para cerrar menú móvil -->
+            <div 
+                *ngIf="mobileMenuOpen"
+                (click)="closeMobileMenu()"
+                class="fixed inset-0 bg-black bg-opacity-20 z-40 md:hidden"
+            ></div>
         </nav>
 
         <!-- Content Area -->

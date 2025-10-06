@@ -28,36 +28,42 @@ export class AdminComponent implements OnInit, OnDestroy {
   menuItems = [
     {
       titulo: 'Dashboard',
+      tituloCorto: 'Dashboard',
       icono: 'fas fa-tachometer-alt',
       ruta: '/admin/dashboard',
       activo: true
     },
     {
       titulo: 'Registrar Países',
+      tituloCorto: 'Países',
       icono: 'fas fa-globe-americas',
       ruta: '/admin/registrar-paises',
       activo: false
     },
     {
       titulo: 'Gestionar Billetes',
+      tituloCorto: 'Billetes',
       icono: 'fas fa-money-bill-wave',
       ruta: '/admin/billetes',
       activo: false
     },
     {
       titulo: 'Usuarios',
+      tituloCorto: 'Usuarios',
       icono: 'fas fa-users',
       ruta: '/admin/usuarios',
       activo: false
     },
     {
       titulo: 'Reportes',
+      tituloCorto: 'Reportes',
       icono: 'fas fa-chart-line',
       ruta: '/admin/reportes',
       activo: false
     },
     {
       titulo: 'Configuración',
+      tituloCorto: 'Config',
       icono: 'fas fa-cog',
       ruta: '/admin/configuracion',
       activo: false
@@ -190,8 +196,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   getSidebarClasses(): string {
     if (this.isMobile) {
       return this.sidebarOpen ? 
-        'fixed left-0 top-0 h-full w-64 transform translate-x-0' : 
-        'fixed left-0 top-0 h-full w-64 transform -translate-x-full';
+        'fixed left-0 top-0 h-full w-48 transform translate-x-0' : 
+        'fixed left-0 top-0 h-full w-48 transform -translate-x-full';
     } else {
       return this.sidebarOpen ? 'w-64' : 'w-16';
     }

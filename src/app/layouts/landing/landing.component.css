@@ -21,3 +21,41 @@
     padding-bottom: 4px;
     margin-right: 8px;
 }
+
+/* Estilos para el menú móvil responsive */
+.mobile-menu-dropdown {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mejorar la apariencia del botón hamburguesa */
+.menu-toggle {
+    transition: transform 0.2s ease;
+}
+
+.menu-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Asegurar que el menú se vea bien en pantallas pequeñas */
+@media (max-width: 767px) {
+    .mobile-menu-item {
+        min-height: 48px; /* Área de toque adecuada */
+        display: flex;
+        align-items: center;
+    }
+    
+    .mobile-menu-item:active {
+        background-color: #f3f4f6;
+    }
+}
