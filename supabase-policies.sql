@@ -24,9 +24,35 @@ WITH CHECK (bucket_id = 'img-billetes');
 -- ⚠️ Solo para desarrollo, NO usar en producción
 
 -- ===================================================================
+-- POLÍTICAS ESPECÍFICAS PARA BILLETES
+-- ===================================================================
+
+-- Política para subir imágenes de billetes (organizadas por país)
+CREATE POLICY "Allow billete uploads by country" ON storage.objects
+FOR INSERT WITH CHECK (
+  bucket_id = 'img-billetes' AND
+  (storage.foldername(name))[1] = 'billetes'
+);
+
+-- Política para actualizar imágenes de billetes existentes
+CREATE POLICY "Allow billete image updates" ON storage.objects
+FOR UPDATE USING (
+  bucket_id = 'img-billetes' AND
+  (storage.foldername(name))[1] = 'billetes'
+);
+
+-- Política para eliminar imágenes de billetes
+CREATE POLICY "Allow billete image deletes" ON storage.objects
+FOR DELETE USING (
+  bucket_id = 'img-billetes' AND
+  (storage.foldername(name))[1] = 'billetes'
+);
+
+-- ===================================================================
 -- NOTAS IMPORTANTES:
 -- ===================================================================
 -- 1. ✅ Bucket configurado: 'img-billetes'
--- 2. Estas políticas permiten acceso público - ajústalas según tus necesidades
--- 3. Si quieres mayor seguridad, puedes agregar condiciones auth.uid()
+-- 2. Las imágenes de billetes se organizan en: billetes/{paisId}/{billeteId}/
+-- 3. Estas políticas permiten acceso público - ajústalas según tus necesidades
+-- 4. Si quieres mayor seguridad, puedes agregar condiciones auth.uid()
 -- ===================================================================

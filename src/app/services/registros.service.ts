@@ -23,6 +23,43 @@ export class RegistrosService {
     return this.http.get<any>(this.apiUrl + 'billetes/');
   }
 
+  // Obtener billetes con filtros y paginación
+  obtenerBilletes(params?: any): Observable<any> {
+    let url = this.apiUrl + 'billetes/';
+    if (params) {
+      const queryParams = new URLSearchParams();
+      Object.keys(params).forEach(key => {
+        if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+          queryParams.append(key, params[key].toString());
+        }
+      });
+      if (queryParams.toString()) {
+        url += '?' + queryParams.toString();
+      }
+    }
+    return this.http.get<any>(url);
+  }
+
+  // Crear billete
+  crearBillete(billete: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'billetes/', billete);
+  }
+
+  // Actualizar billete
+  actualizarBillete(id: number, billete: any): Observable<any> {
+    return this.http.put<any>(this.apiUrl + `billetes/${id}`, billete);
+  }
+
+  // Eliminar billete
+  eliminarBillete(id: number): Observable<any> {
+    return this.http.delete<any>(this.apiUrl + `billetes/${id}`);
+  }
+
+  // Obtener estadísticas
+  obtenerEstadisticas(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'billetes/estadisticas');
+  }
+
   //PAISES
 
   // prueba sin cache

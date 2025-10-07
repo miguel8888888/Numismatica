@@ -75,6 +75,10 @@ export const routes: Routes = [
         path: 'profile', 
         loadComponent: () => import('./views/admin/profile/profile.component').then(c => c.ProfileComponent)
       },
+      { 
+        path: 'billetes', 
+        loadComponent: () => import('./views/admin/gestionar-billetes/gestionar-billetes.component').then(c => c.GestionarBilletesComponent)
+      },
       // Futuras rutas administrativas
       // { path: 'usuarios', loadComponent: ... },
       // { path: 'reportes', loadComponent: ... },

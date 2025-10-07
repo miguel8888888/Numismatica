@@ -182,6 +182,89 @@ export class SupabaseService {
   }
 
   /**
+   * Subir imagen de billete organizándola por país
+   */
+  async uploadBilleteImage(file: File, filePath: string): Promise<{ url: string; path: string } | null> {
+    try {
+      console.log('📤 Subiendo imagen de billete...', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        path: filePath
+      });
+
+      // Redimensionar imagen si es necesario (max 1200x800 para billetes)
+      const resizedFile = await this.resizeImage(file, 1200, 800);
+
+      console.log('📤 Intentando subir archivo a Supabase:', {
+        bucket: this.BUCKET_NAME,
+        path: filePath,
+        fileSize: resizedFile.size,
+        fileType: resizedFile.type
+      });
+
+      // Subir la imagen
+      const { data, error } = await this.supabase.storage
+        .from(this.BUCKET_NAME)
+        .upload(filePath, resizedFile, {
+          cacheControl: '3600',
+          upsert: true // Permitir reemplazar si existe
+        });
+
+      if (error) {
+        console.error('❌ Error detallado al subir imagen de billete:', {
+          error: error,
+          message: error.message,
+          bucket: this.BUCKET_NAME,
+          path: filePath
+        });
+        throw new Error(`Error de Supabase: ${error.message}`);
+      }
+
+      console.log('✅ Imagen de billete subida exitosamente:', data);
+
+      // Obtener la URL pública
+      const { data: urlData } = this.supabase.storage
+        .from(this.BUCKET_NAME)
+        .getPublicUrl(filePath);
+
+      return {
+        url: urlData.publicUrl,
+        path: filePath
+      };
+
+    } catch (error) {
+      console.error('❌ Error en uploadBilleteImage:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Eliminar imagen de billete
+   */
+  async deleteBilleteImage(imagePath: string): Promise<boolean> {
+    try {
+      console.log('🗑️ Eliminando imagen de billete:', imagePath);
+
+      const { error } = await this.supabase.storage
+        .from(this.BUCKET_NAME)
+        .remove([imagePath]);
+
+      if (error) {
+        console.error('❌ Error al eliminar imagen de billete:', error);
+        return false;
+      }
+
+      console.log('✅ Imagen de billete eliminada exitosamente');
+      return true;
+
+    } catch (error) {
+      console.error('❌ Error en deleteBilleteImage:', error);
+      return false;
+    }
+  }
+
+  /**
    * Redimensionar imagen antes de subir (opcional)
    */
   async resizeImage(file: File, maxWidth: number = 300, maxHeight: number = 300): Promise<File> {
