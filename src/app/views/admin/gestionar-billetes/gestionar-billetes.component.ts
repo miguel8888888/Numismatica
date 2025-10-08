@@ -13,13 +13,13 @@ interface Billete {
   precio: string;
   banco_emisor?: string;
   medidas?: string;
-  descripcion?: string;
+  descripcion_general?: string; // ✅ Corregido para coincidir con API
   descripcion_anverso?: string;
   descripcion_reverso?: string;
   url_anverso?: string;
   url_reverso?: string;
   pick?: string;
-  estado?: 'Regular' | 'Aceptable' | 'Bueno' | 'Muy bueno' | 'Excelente';
+    estado: 'Regular' | 'Aceptable' | 'Bueno' | 'Muy bueno' | 'Excelente'; // ✅ Corregido según API
   vendido: boolean;
   destacado: boolean;
   fecha_actualizacion?: string;
@@ -107,6 +107,7 @@ export class GestionarBilletesComponent implements OnInit {
   imagenReverso: string | null = null;
   imagenAnversoPath: string | null = null;
   imagenReversoPath: string | null = null;
+  private _billeteId: string | null = null; // ✅ ID estable para evitar NG0100
 
   // Filtros y paginación usando la API real
   filtros = {
@@ -129,8 +130,8 @@ export class GestionarBilletesComponent implements OnInit {
     has_prev: false
   };
 
-  // Estados disponibles según la nueva especificación
-  estadosDisponibles = ['Regular', 'Aceptable', 'Bueno', 'Muy bueno', 'Excelente'];
+  // Estados disponibles según la API v1.4.0
+  estadosDisponibles = ['Regular', 'Aceptable', 'Bueno', 'Muy bueno', 'Excelente']; // ✅ Corregido según API
 
   // Propiedades para compatibilidad con el template legacy
   filtroTexto = '';
@@ -144,7 +145,7 @@ export class GestionarBilletesComponent implements OnInit {
       precio: ['', Validators.required],
       banco_emisor: [''],
       medidas: [''],
-      descripcion: [''],
+      descripcion_general: [''], // ✅ Corregido para coincidir con API
       descripcion_anverso: [''],
       descripcion_reverso: [''],
       url_anverso: [''],
@@ -288,13 +289,18 @@ export class GestionarBilletesComponent implements OnInit {
     this.billeteSeleccionado = billete || null;
     this.modoEdicion = !!billete;
     
+    // Resetear ID temporal para billetes nuevos (evita NG0100)
+    if (!billete) {
+      this._billeteId = null;
+    }
+    
     if (billete) {
       this.billeteForm.patchValue({
         pais: billete.pais,
         banco_emisor: billete.banco_emisor || '',
         denominacion: billete.denominacion,
         medidas: billete.medidas || '',
-        descripcion: billete.descripcion || '',
+        descripcion_general: billete.descripcion_general || '', // ✅ Corregido
         descripcion_anverso: billete.descripcion_anverso || '',
         descripcion_reverso: billete.descripcion_reverso || '',
         url_anverso: billete.url_anverso || '',
@@ -337,6 +343,9 @@ export class GestionarBilletesComponent implements OnInit {
     this.imagenReverso = null;
     this.imagenAnversoPath = null;
     this.imagenReversoPath = null;
+    
+    // Resetear ID temporal (evita NG0100)
+    this._billeteId = null;
   }
 
   // Métodos CRUD
@@ -351,7 +360,19 @@ export class GestionarBilletesComponent implements OnInit {
     this.cargando = true;
     const formData = this.billeteForm.value;
     
-    console.log('💾 Guardando billete:', { modoEdicion: this.modoEdicion, formData });
+    console.log('💾 Guardando billete:', { 
+      modoEdicion: this.modoEdicion, 
+      formData,
+      descripcion_general: formData.descripcion_general 
+    });
+    
+    // Validar datos requeridos antes de enviar
+    console.log('📋 Validación de campos requeridos:', {
+      pais: formData.pais,
+      denominacion: formData.denominacion,
+      precio: formData.precio,
+      tieneRequeridos: !!(formData.pais && formData.denominacion && formData.precio)
+    });
     
     const operacion = this.modoEdicion && this.billeteSeleccionado
       ? this.registrosService.actualizarBillete(this.billeteSeleccionado.id!, formData)
@@ -373,10 +394,31 @@ export class GestionarBilletesComponent implements OnInit {
       },
       error: (error) => {
         console.error('❌ Error al guardar billete:', error);
-        this.notificationService.error(
-          'Error al guardar el billete: ' + (error.message || error.error?.detail || 'Error desconocido'),
-          'Error'
-        );
+        console.error('📊 Detalles del error:', {
+          status: error.status,
+          statusText: error.statusText,
+          errorDetail: error.error?.detail,
+          fullError: error.error
+        });
+        
+        let errorMessage = 'Error al guardar el billete: ';
+        if (error.status === 422) {
+          errorMessage += 'Datos de validación incorrectos. ';
+          if (error.error?.detail) {
+            if (Array.isArray(error.error.detail)) {
+              const validationErrors = error.error.detail.map((err: any) => 
+                `${err.loc?.join('.')||'campo'}: ${err.msg}`
+              ).join(', ');
+              errorMessage += validationErrors;
+            } else {
+              errorMessage += error.error.detail;
+            }
+          }
+        } else {
+          errorMessage += error.message || error.error?.detail || 'Error desconocido';
+        }
+        
+        this.notificationService.error(errorMessage, 'Error');
         this.cargando = false;
       }
     });
@@ -677,8 +719,16 @@ export class GestionarBilletesComponent implements OnInit {
     return paisId ? paisId.toString() : '';
   }
 
-  // Obtener ID del billete para las imágenes
+  // Obtener ID del billete para las imágenes (evita NG0100 con ID estable)
   get billeteId(): string {
-    return this.billeteSeleccionado?.id?.toString() || `temp-${Date.now()}`;
+    if (this.billeteSeleccionado?.id) {
+      return this.billeteSeleccionado.id.toString();
+    }
+    
+    // Para billetes nuevos, mantener el mismo ID temporal durante toda la sesión
+    if (!this._billeteId) {
+      this._billeteId = `temp-${Date.now()}`;
+    }
+    return this._billeteId;
   }
 }

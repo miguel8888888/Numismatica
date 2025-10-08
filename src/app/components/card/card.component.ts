@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, PLATFORM_ID, Input } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { ModalService } from '../../services/modal.service';
 
 
 @Component({
@@ -14,6 +15,7 @@ export class CardComponent implements OnInit {
   @Input() bandera: string = '';
   @Input() precio: string = 'No definido';
   @Input() denominacion: string = 'No Definido';
+  @Input() id: number = 0;
 
   urlDriveAnverso: string = '';
   urlDriveReverso: string = '';
@@ -21,7 +23,10 @@ export class CardComponent implements OnInit {
   hover: boolean = false;
   isBrowser: boolean = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private modalService: ModalService
+  ) {}
 
 
   ngOnInit(): void {
@@ -79,8 +84,12 @@ export class CardComponent implements OnInit {
   }
 
   verMasInformacion(): void {
-    console.log('Viendo más información del billete:', this.denominacion);
-    // Aquí irá la lógica para mostrar más información
-    alert(`Información detallada del billete ${this.denominacion}. Funcionalidad en desarrollo.`);
+    console.log('🔍 Abriendo detalle del billete:', this.denominacion, 'ID:', this.id);
+    if (this.id) {
+      this.modalService.openBilleteDetail(this.id);
+    } else {
+      console.error('❌ ID del billete no definido');
+      alert('Error: ID del billete no disponible');
+    }
   }
 }

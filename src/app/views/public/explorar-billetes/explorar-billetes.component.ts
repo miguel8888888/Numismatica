@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RegistrosService } from '../../../services/registros.service';
 import { CardComponent } from '../../../components/card/card.component';
+import { BilleteDetailComponent } from '../../../components/billete-detail/billete-detail.component';
+import { ModalService } from '../../../services/modal.service';
 
 interface BilleteDetallado {
   id: number;
@@ -41,7 +43,7 @@ interface PaisInfo {
 
 @Component({
   selector: 'app-explorar-billetes',
-  imports: [CommonModule, FormsModule, CardComponent],
+  imports: [CommonModule, FormsModule, CardComponent, BilleteDetailComponent],
   templateUrl: './explorar-billetes.component.html',
   styleUrl: './explorar-billetes.component.css'
 })

@@ -1,7 +1,7 @@
 # 🚀 API REFERENCE - SISTEMA DE BILLETES
 
-**Última Actualización:** 07 de October de 2025
-**Versión API:** 1.3.0  
+**Última Actualización:** 08 de octubre de 2025
+**Versión API:** 1.5.0  
 **Base URL:** `https://fastapi-railway-ihky.onrender.com`  
 
 ---
@@ -47,13 +47,13 @@ GET /billetes/
 - `denominacion` (str): Filtrar por denominación exacta
 - `precio_min` (float): Precio mínimo
 - `precio_max` (float): Precio máximo
-- `estado` (str): `"Excelente"` | `"Bueno"` | `"Regular"` | `"Malo"`
+- `estado` (str): `"Regular"` | `"Aceptable"` | `"Bueno"` | `"Muy bueno"` | `"Excelente"`
 - `vendido` (bool): true/false
 - `destacado` (bool): true/false
 - `pick` (str): Código Pick del billete
 - `banco_emisor` (str): Nombre del banco emisor
 - `caracteristica_id` (int): ID de característica específica
-- `search` (str): Búsqueda libre en denominación, banco_emisor, descripciones
+- `search` (str): Búsqueda libre en denominación, banco_emisor, descripciones (incluyendo descripción general)
 
 **Respuesta 200:**
 ```json
@@ -68,6 +68,7 @@ GET /billetes/
       "medidas": "70 x 140 mm",
       "descripcion_anverso": "Retrato de Gabriel García Márquez...",
       "descripcion_reverso": "Escenas de Macondo...",
+      "descripcion_general": "Billete conmemorativo del premio Nobel de Literatura...",
       "url_anverso": "https://example.com/anverso.jpg",
       "url_reverso": "https://example.com/reverso.jpg",
       "pick": "P-458",
@@ -133,10 +134,11 @@ Content-Type: application/json
   "medidas": "75 x 150 mm",
   "descripcion_anverso": "Descripción del frente",
   "descripcion_reverso": "Descripción del reverso",
+  "descripcion_general": "Descripción general del billete y su contexto histórico",
   "url_anverso": "https://example.com/anverso.jpg",
   "url_reverso": "https://example.com/reverso.jpg",
   "pick": "P-123",
-  "estado": "Excelente",
+  "estado": "Muy bueno",
   "vendido": false,
   "destacado": true,
   "caracteristicas_ids": [1, 2]
@@ -149,7 +151,18 @@ Content-Type: application/json
 - `precio` (string, 1-50 chars)
 
 **Campos Opcionales:**
-- Todos los demás campos
+- `banco_emisor` (string, máx 255 chars)
+- `medidas` (string, máx 50 chars)
+- `descripcion_anverso` (text)
+- `descripcion_reverso` (text)
+- `descripcion_general` (text) **← NUEVO CAMPO**
+- `url_anverso` (string)
+- `url_reverso` (string)
+- `pick` (string, máx 50 chars)
+- `estado` (enum: "Regular", "Aceptable", "Bueno", "Muy bueno", "Excelente")
+- `vendido` (boolean)
+- `destacado` (boolean)
+- `caracteristicas_ids` (array de integers)
 
 **Respuesta 201:** (Billete creado con ID asignado)
 
@@ -282,10 +295,11 @@ GET /billetes/stats
     }
   },
   "estadisticas_por_estado": {
-    "Excelente": 67,
+    "Regular": 5,
+    "Aceptable": 12,
     "Bueno": 78,
-    "Regular": 11,
-    "Malo": 0
+    "Muy bueno": 45,
+    "Excelente": 67
   },
   "caracteristicas_mas_usadas": [
     {
@@ -522,6 +536,19 @@ Authorization: Bearer {jwt_token}  // Para endpoints protegidos
 ---
 
 ## 📝 **CHANGELOG**
+
+### **v1.5.0 - 8 de octubre de 2025**
+- ✅ Actualizada escala de estados de billetes
+- ✅ Nuevos estados: "Regular", "Aceptable", "Bueno", "Muy bueno", "Excelente"
+- ✅ Migración automática de estados existentes
+- ✅ Documentación actualizada con nueva escala de calidad
+
+### **v1.4.0 - 7 de octubre de 2025**
+- ✅ Agregado campo `descripcion_general` a la tabla billetes
+- ✅ Actualizado esquemas de API para incluir descripción general
+- ✅ Mejorado filtro de búsqueda para incluir descripción general
+- ✅ Garantizado retorno de `fecha_actualizacion` en todas las respuestas
+- ✅ Incluida migración de base de datos automática
 
 ### **v1.3.0 - 7 de octubre de 2025**
 - ✅ Implementados endpoints PATCH para toggle de estados

@@ -297,10 +297,14 @@
             [reverso]="billete.url_reverso"
             [bandera]="billete.pais_rel.bandera"
             [denominacion]="billete.denominacion"
-            [precio]="billete.precio">
+            [precio]="billete.precio"
+            [id]="billete.id">
           </app-card>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Modal del detalle del billete -->
+  <app-billete-detail></app-billete-detail>
 </div>
