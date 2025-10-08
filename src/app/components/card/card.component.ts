@@ -34,16 +34,34 @@ export class CardComponent implements OnInit {
   }
 
   limpiarUrl(url: string): string {
-    // Elimina cualquier parte que tenga /view y cualquier otra continuidad
-    url = url.replace(/\/view.*$/, '');
-
-    // Extrae el id y construye la url de thumbnail
-    const match = url.match(/\/d\/([^\/]+)/);
-    if (match && match[1]) {
-      url = `https://drive.google.com/thumbnail?id=${match[1]}`;
+    // Verificar si la URL existe
+    if (!url) {
+      console.warn('URL no definida o vacía');
+      return '';
     }
-    console.log(url);
-    // Retorna la URL limpia
+
+    // Si es una URL de Supabase, devolverla tal como está
+    if (url.includes('supabase.co')) {
+      console.log('URL de Supabase detectada:', url);
+      return url;
+    }
+
+    // Si es una URL de Google Drive, procesarla como antes
+    if (url.includes('drive.google.com')) {
+      // Elimina cualquier parte que tenga /view y cualquier otra continuidad
+      url = url.replace(/\/view.*$/, '');
+
+      // Extrae el id y construye la url de thumbnail
+      const match = url.match(/\/d\/([^\/]+)/);
+      if (match && match[1]) {
+        url = `https://drive.google.com/thumbnail?id=${match[1]}`;
+      }
+      console.log('URL de Google Drive procesada:', url);
+      return url;
+    }
+
+    // Si no es ninguna de las dos, devolver la URL tal como está
+    console.log('URL desconocida, devolviendo tal como está:', url);
     return url;
   }
 

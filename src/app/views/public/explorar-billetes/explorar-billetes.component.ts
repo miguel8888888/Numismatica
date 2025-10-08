@@ -9,8 +9,8 @@ interface BilleteDetallado {
   id: number;
   denominacion: string;
   precio: string;
-  anverso: string;
-  reverso: string;
+  url_anverso: string;
+  url_reverso: string;
   pais: number;
   pais_rel: {
     id: number;
@@ -143,23 +143,57 @@ export class ExplorarBilletesComponent implements OnInit {
     this.loading = true;
     this.error = false;
     
+    console.time('Carga de billetes');
+    
+    // Usar el método original que funciona correctamente
     this.registrosService.obtenerRegistrosBilletes().subscribe({
-      next: (billetes) => {
-        console.log('Billetes obtenidos:', billetes);
-        this.billetes = this.procesarBilletes(billetes || []);
-        this.calcularRangoPrecios();
-        this.organizarPorContinentes();
-        this.loading = false;
+      next: (response) => {
+        this.procesarRespuestaBilletes(response);
       },
       error: (error) => {
-        console.error('Error al cargar billetes:', error);
+        console.error('❌ Error al cargar billetes:', error);
+        if (error.error && error.error.detail) {
+          console.error('💥 Detalles del error:', error.error.detail);
+        }
+        console.timeEnd('Carga de billetes');
         this.error = true;
         this.loading = false;
       }
     });
   }
 
+  private procesarRespuestaBilletes(response: any) {
+    console.log('✅ Respuesta de billetes recibida:', response);
+    // Extraer los billetes de la estructura paginada
+    const billetesArray = response?.billetes || response || [];
+    console.log(`📊 Array de billetes extraído: ${billetesArray.length} billetes`);
+    
+    console.time('⚡ Procesamiento de billetes');
+    this.billetes = this.procesarBilletes(billetesArray);
+    console.timeEnd('⚡ Procesamiento de billetes');
+    console.log(`🎯 Billetes procesados: ${this.billetes.length}`);
+    
+    console.time('💰 Cálculo de rango de precios');
+    this.calcularRangoPrecios();
+    console.timeEnd('💰 Cálculo de rango de precios');
+    
+    console.time('🌍 Organización por continentes');
+    this.organizarPorContinentes();
+    console.timeEnd('🌍 Organización por continentes');
+    console.log(`🗺️ Continentes organizados: ${this.continentes.length}`);
+    
+    console.timeEnd('Carga de billetes');
+    this.loading = false;
+    console.log('🎉 Carga completada exitosamente');
+  }
+
   private procesarBilletes(billetesRaw: any[]): BilleteDetallado[] {
+    // Validar que billetesRaw sea un array
+    if (!Array.isArray(billetesRaw)) {
+      console.warn('Los datos de billetes no son un array:', billetesRaw);
+      return [];
+    }
+    
     return billetesRaw.map(billete => {
       const nombrePais = billete.pais_rel?.pais || 'Desconocido';
       const paisInfo = this.paisesAContinentes[nombrePais] || { continente: 'Otros', codigo: 'xx' };
@@ -214,9 +248,14 @@ export class ExplorarBilletesComponent implements OnInit {
 
   organizarPorContinentes() {
     const continentesMap = new Map<string, ContinenteInfo>();
+    const preciosPorContinente = new Map<string, number[]>();
     
+    // Una sola pasada por todos los billetes para recopilar datos
     this.billetes.forEach(billete => {
       const continente = billete.continente || 'Otros';
+      const precio = billete.precioNumerico || 0;
+      
+      // Inicializar continente si no existe
       if (!continentesMap.has(continente)) {
         continentesMap.set(continente, {
           nombre: continente,
@@ -225,18 +264,26 @@ export class ExplorarBilletesComponent implements OnInit {
           precioPromedio: 0,
           icono: this.obtenerIconoContinente(continente)
         });
+        preciosPorContinente.set(continente, []);
       }
       
       const cont = continentesMap.get(continente)!;
       cont.paises.add(billete.pais_rel.pais);
       cont.totalBilletes++;
+      
+      // Acumular precio para calcular promedio
+      if (precio > 0) {
+        preciosPorContinente.get(continente)!.push(precio);
+      }
     });
     
-    // Calcular precios promedio
+    // Calcular precios promedio de forma eficiente
     continentesMap.forEach((continente, nombre) => {
-      const billetesContinente = this.billetes.filter(b => b.continente === nombre);
-      const sumaPrecios = billetesContinente.reduce((sum, b) => sum + (b.precioNumerico || 0), 0);
-      continente.precioPromedio = billetesContinente.length > 0 ? sumaPrecios / billetesContinente.length : 0;
+      const precios = preciosPorContinente.get(nombre) || [];
+      if (precios.length > 0) {
+        const sumaPrecios = precios.reduce((sum, precio) => sum + precio, 0);
+        continente.precioPromedio = sumaPrecios / precios.length;
+      }
     });
     
     this.continentes = Array.from(continentesMap.values())

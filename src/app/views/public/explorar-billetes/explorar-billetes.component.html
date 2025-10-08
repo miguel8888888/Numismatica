@@ -293,8 +293,8 @@
       <div *ngIf="billetesFiltrados.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <div *ngFor="let billete of billetesFiltrados">
           <app-card
-            [anverso]="billete.anverso"
-            [reverso]="billete.reverso"
+            [anverso]="billete.url_anverso"
+            [reverso]="billete.url_reverso"
             [bandera]="billete.pais_rel.bandera"
             [denominacion]="billete.denominacion"
             [precio]="billete.precio">
