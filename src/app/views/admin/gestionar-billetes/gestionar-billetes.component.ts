@@ -213,26 +213,39 @@ export class GestionarBilletesComponent implements OnInit {
 
   private async cargarPaises() {
     try {
-      this.paises = await this.registrosService.obtenerRegistrosPaises().toPromise();
+      const response = await this.registrosService.obtenerRegistrosPaises().toPromise();
+      this.paises = response || [];
     } catch (error) {
       console.error('Error al cargar países:', error);
       this.notificationService.error('Error al cargar los países');
+      this.paises = [];
     }
   }
 
   private cargarCaracteristicas() {
     console.log('🏷️ Cargando características...');
     
-    // Como el endpoint /caracteristicas/ no existe (404), usar datos por defecto
-    console.log('⚠️ Endpoint de características no disponible, usando datos por defecto');
-    this.caracteristicas = [
-      { id: 1, nombre: 'Conmemorativo', descripcion: 'Billete conmemorativo especial', color: '#007bff' },
-      { id: 2, nombre: 'Raro', descripcion: 'Billete poco común', color: '#dc3545' },
-      { id: 3, nombre: 'Serie Limitada', descripcion: 'Tirada limitada', color: '#ffc107' },
-      { id: 4, nombre: 'Histórico', descripcion: 'Valor histórico', color: '#28a745' }
-    ];
-    
-    console.log('✅ Características cargadas (por defecto):', this.caracteristicas.length);
+    // Usar la API real según la nueva documentación v1.3.0
+    this.registrosService.obtenerCaracteristicas().subscribe({
+      next: (caracteristicas) => {
+        console.log('✅ Características cargadas desde API:', caracteristicas);
+        this.caracteristicas = caracteristicas || [];
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar características:', error);
+        console.log('🔄 Usando características por defecto como fallback');
+        
+        // Fallback con datos por defecto si la API falla
+        this.caracteristicas = [
+          { id: 1, nombre: 'Conmemorativo', descripcion: 'Billete conmemorativo especial', color: '#007bff' },
+          { id: 2, nombre: 'Raro', descripcion: 'Billete poco común', color: '#dc3545' },
+          { id: 3, nombre: 'Serie Limitada', descripcion: 'Tirada limitada', color: '#ffc107' },
+          { id: 4, nombre: 'Histórico', descripcion: 'Valor histórico', color: '#28a745' }
+        ];
+        
+        console.log('✅ Características fallback cargadas:', this.caracteristicas.length);
+      }
+    });
   }
 
   private cargarEstadisticas() {
@@ -416,13 +429,15 @@ export class GestionarBilletesComponent implements OnInit {
     
     console.log('🌟 Cambiando estado destacado:', { id: billete.id, nuevoEstado });
     
-    const billeteActualizado = { ...billete, destacado: nuevoEstado };
-    
-    this.registrosService.actualizarBillete(billete.id!, billeteActualizado).subscribe({
+    // Usar el nuevo endpoint PATCH más eficiente
+    this.registrosService.toggleDestacado(billete.id!, nuevoEstado).subscribe({
       next: (response) => {
         console.log('✅ Estado destacado actualizado:', response);
         billete.destacado = nuevoEstado;
-        this.notificationService.success(`Billete ${nuevoEstado ? 'marcado como destacado' : 'desmarcado como destacado'}`, 'Éxito');
+        
+        // Mostrar mensaje del backend si existe, sino usar mensaje por defecto
+        const mensaje = response.mensaje || `Billete ${nuevoEstado ? 'marcado como destacado' : 'desmarcado como destacado'}`;
+        this.notificationService.success(mensaje, 'Éxito');
         
         // Recargar estadísticas si es necesario
         this.cargarEstadisticas();
@@ -444,13 +459,15 @@ export class GestionarBilletesComponent implements OnInit {
     
     console.log('💰 Cambiando estado vendido:', { id: billete.id, nuevoEstado });
     
-    const billeteActualizado = { ...billete, vendido: nuevoEstado };
-    
-    this.registrosService.actualizarBillete(billete.id!, billeteActualizado).subscribe({
+    // Usar el nuevo endpoint PATCH más eficiente
+    this.registrosService.toggleVendido(billete.id!, nuevoEstado).subscribe({
       next: (response) => {
         console.log('✅ Estado vendido actualizado:', response);
         billete.vendido = nuevoEstado;
-        this.notificationService.success(`Billete marcado como ${nuevoEstado ? 'vendido' : 'disponible'}`, 'Éxito');
+        
+        // Mostrar mensaje del backend si existe, sino usar mensaje por defecto
+        const mensaje = response.mensaje || `Billete marcado como ${nuevoEstado ? 'vendido' : 'disponible'}`;
+        this.notificationService.success(mensaje, 'Éxito');
         
         // Recargar estadísticas si es necesario
         this.cargarEstadisticas();

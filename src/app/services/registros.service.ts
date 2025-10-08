@@ -55,9 +55,54 @@ export class RegistrosService {
     return this.http.delete<any>(this.apiUrl + `billetes/${id}`);
   }
 
-  // Obtener estadísticas
+  // Obtener billete por ID
+  obtenerBilletePorId(id: number): Observable<any> {
+    return this.http.get<any>(this.apiUrl + `billetes/${id}`);
+  }
+
+  // Toggle destacado (PATCH - más eficiente)
+  toggleDestacado(id: number, destacado: boolean): Observable<any> {
+    return this.http.patch<any>(this.apiUrl + `billetes/${id}/destacado`, { destacado });
+  }
+
+  // Toggle vendido (PATCH - más eficiente)
+  toggleVendido(id: number, vendido: boolean): Observable<any> {
+    return this.http.patch<any>(this.apiUrl + `billetes/${id}/vendido`, { vendido });
+  }
+
+  // Obtener estadísticas (endpoint correcto según v1.3.0)
   obtenerEstadisticas(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + 'billetes/estadisticas');
+    return this.http.get<any>(this.apiUrl + 'billetes/stats');
+  }
+
+  //CARACTERÍSTICAS
+
+  // Obtener características (endpoint actualizado según v1.3.0)
+  obtenerCaracteristicas(activo: boolean = true): Observable<any> {
+    const params = activo ? '?activo=true' : '';
+    return this.http.get<any>(this.apiUrl + 'billetes/caracteristicas/' + params);
+  }
+
+  // Crear característica
+  crearCaracteristica(caracteristica: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'billetes/caracteristicas/', caracteristica);
+  }
+
+  // Actualizar característica
+  actualizarCaracteristica(id: number, caracteristica: any): Observable<any> {
+    return this.http.put<any>(this.apiUrl + `billetes/caracteristicas/${id}`, caracteristica);
+  }
+
+  // Eliminar característica
+  eliminarCaracteristica(id: number): Observable<any> {
+    return this.http.delete<any>(this.apiUrl + `billetes/caracteristicas/${id}`);
+  }
+
+  //USUARIOS
+
+  // Obtener perfil del usuario (nuevo endpoint)
+  obtenerPerfilUsuario(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'users/me');
   }
 
   //PAISES

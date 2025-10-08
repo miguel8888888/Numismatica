@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { RegistrosService } from '../../../services/registros.service';
 
 interface PaisRegistro {
-  id?: string;
+  id?: number;
   pais: string;
   bandera: string;
   continente?: string;
