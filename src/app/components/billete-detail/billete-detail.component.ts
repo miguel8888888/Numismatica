@@ -16,7 +16,7 @@ interface BilleteCompleto {
   url_anverso: string;
   url_reverso: string;
   pick: string;
-  estado: string;
+  estado: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'UNC'; // API v2.0.0 - Sistema numérico
   vendido: boolean;
   destacado: boolean;
   fecha_actualizacion: string;
@@ -154,5 +154,22 @@ export class BilleteDetailComponent implements OnInit, OnDestroy {
     }
     
     return url;
+  }
+
+  // Mapeo de estados numéricos a descripción legible (API v2.0.0)
+  obtenerDescripcionEstado(estado: string): string {
+    const mapaEstados: Record<string, string> = {
+      '1': '1 - Muy malo',
+      '2': '2 - Malo', 
+      '3': '3 - Regular',
+      '4': '4 - Aceptable',
+      '5': '5 - Promedio',
+      '6': '6 - Bueno',
+      '7': '7 - Muy bueno',
+      '8': '8 - Excelente',
+      '9': '9 - Casi perfecto',
+      'UNC': 'UNC - Sin circular'
+    };
+    return mapaEstados[estado] || `Estado ${estado}`;
   }
 }

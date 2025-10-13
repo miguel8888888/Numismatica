@@ -19,7 +19,7 @@ interface Billete {
   url_anverso?: string;
   url_reverso?: string;
   pick?: string;
-    estado: 'Regular' | 'Aceptable' | 'Bueno' | 'Muy bueno' | 'Excelente'; // ✅ Corregido según API
+  estado: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'UNC'; // ✅ API v2.0.0 - Sistema numérico
   vendido: boolean;
   destacado: boolean;
   fecha_actualizacion?: string;
@@ -130,8 +130,8 @@ export class GestionarBilletesComponent implements OnInit {
     has_prev: false
   };
 
-  // Estados disponibles según la API v1.4.0
-  estadosDisponibles = ['Regular', 'Aceptable', 'Bueno', 'Muy bueno', 'Excelente']; // ✅ Corregido según API
+  // Estados disponibles según la API v2.0.0 - Sistema numérico estándar
+  estadosDisponibles = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'UNC']; // ✅ API v2.0.0
 
   // Propiedades para compatibilidad con el template legacy
   filtroTexto = '';
@@ -553,6 +553,23 @@ export class GestionarBilletesComponent implements OnInit {
   obtenerNombrePais(paisId: number): string {
     const pais = this.paises.find(p => p.id === paisId);
     return pais?.pais || 'País no encontrado';
+  }
+
+  // Mapeo de estados numéricos a descripción legible (API v2.0.0)
+  obtenerDescripcionEstado(estado: string): string {
+    const mapaEstados: Record<string, string> = {
+      '1': '1 - Muy malo',
+      '2': '2 - Malo', 
+      '3': '3 - Regular',
+      '4': '4 - Aceptable',
+      '5': '5 - Promedio',
+      '6': '6 - Bueno',
+      '7': '7 - Muy bueno',
+      '8': '8 - Excelente',
+      '9': '9 - Casi perfecto',
+      'UNC': 'UNC - Sin circular'
+    };
+    return mapaEstados[estado] || `Estado ${estado}`;
   }
 
   obtenerNombresCaracteristicas(caracteristicasIds: number[]): string {

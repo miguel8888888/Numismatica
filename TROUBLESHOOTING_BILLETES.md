@@ -184,16 +184,23 @@ caracteristicas_ids: Array.isArray(formData.caracteristicas_ids)
 
 ---
 
-## ✅ **PROBLEMA SOLUCIONADO - ACTUALIZADO API v1.5.0**
+## ✅ **SISTEMA DE ESTADOS ACTUALIZADO - API v2.0.0**
 
-**Cambio en API:** Backend actualizado a v1.5.0 con nueva escala de estados
-- **✅ API v1.5.0 requiere:** `['Regular', 'Aceptable', 'Bueno', 'Muy bueno', 'Excelente']`
-- **✅ Frontend actualizado:** Coincide perfectamente con la nueva API
+**🚨 BREAKING CHANGE:** API actualizada a v2.0.0 con sistema de estados numérico
+- **✅ API v2.0.0 usa:** `['1', '2', '3', '4', '5', '6', '7', '8', '9', 'UNC']`
+- **✅ Frontend actualizado:** Completamente sincronizado con escala numismática estándar
 
-**Correcciones aplicadas:**
+**Actualizaciones aplicadas:**
 1. ✅ Campo `descripcion_general` implementado
-2. ✅ Estados actualizados según API v1.5.0
-3. ✅ Interface `Billete` corregida
-4. ✅ Array `estadosDisponibles` actualizado
+2. ✅ Sistema de estados numérico (1-9 + UNC) según API v2.0.0
+3. ✅ Interface `Billete` actualizada con tipos numéricos
+4. ✅ Array `estadosDisponibles` con valores numéricos
+5. ✅ Función `obtenerDescripcionEstado()` para mapeo legible
+6. ✅ Templates actualizados en gestión y detalle de billetes
+7. ✅ Componente `billete-detail` actualizado
 
-**Estado:** ✅ COMPLETAMENTE RESUELTO - Frontend sincronizado con API v1.5.0
+**Escala implementada:**
+- 1 = Muy malo | 2 = Malo | 3 = Regular | 4 = Aceptable | 5 = Promedio
+- 6 = Bueno | 7 = Muy bueno | 8 = Excelente | 9 = Casi perfecto | UNC = Sin circular
+
+**Estado:** ✅ COMPLETAMENTE MIGRADO - Frontend sincronizado con API v2.0.0

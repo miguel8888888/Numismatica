@@ -1,7 +1,7 @@
 # 🚀 API REFERENCE - SISTEMA DE BILLETES
 
-**Última Actualización:** 08 de octubre de 2025
-**Versión API:** 1.5.0  
+**Última Actualización:** 13 de octubre de 2025
+**Versión API:** 2.0.0  
 **Base URL:** `https://fastapi-railway-ihky.onrender.com`  
 
 ---
@@ -47,7 +47,7 @@ GET /billetes/
 - `denominacion` (str): Filtrar por denominación exacta
 - `precio_min` (float): Precio mínimo
 - `precio_max` (float): Precio máximo
-- `estado` (str): `"Regular"` | `"Aceptable"` | `"Bueno"` | `"Muy bueno"` | `"Excelente"`
+- `estado` (str): `"1"` | `"2"` | `"3"` | `"4"` | `"5"` | `"6"` | `"7"` | `"8"` | `"9"` | `"UNC"`
 - `vendido` (bool): true/false
 - `destacado` (bool): true/false
 - `pick` (str): Código Pick del billete
@@ -72,7 +72,7 @@ GET /billetes/
       "url_anverso": "https://example.com/anverso.jpg",
       "url_reverso": "https://example.com/reverso.jpg",
       "pick": "P-458",
-      "estado": "Excelente",
+      "estado": "9",
       "vendido": false,
       "destacado": true,
       "fecha_actualizacion": "2025-10-07T10:30:00Z",
@@ -138,7 +138,7 @@ Content-Type: application/json
   "url_anverso": "https://example.com/anverso.jpg",
   "url_reverso": "https://example.com/reverso.jpg",
   "pick": "P-123",
-  "estado": "Muy bueno",
+  "estado": "8",
   "vendido": false,
   "destacado": true,
   "caracteristicas_ids": [1, 2]
@@ -159,7 +159,7 @@ Content-Type: application/json
 - `url_anverso` (string)
 - `url_reverso` (string)
 - `pick` (string, máx 50 chars)
-- `estado` (enum: "Regular", "Aceptable", "Bueno", "Muy bueno", "Excelente")
+- `estado` (enum: "1", "2", "3", "4", "5", "6", "7", "8", "9", "UNC")
 - `vendido` (boolean)
 - `destacado` (boolean)
 - `caracteristicas_ids` (array de integers)
@@ -295,11 +295,16 @@ GET /billetes/stats
     }
   },
   "estadisticas_por_estado": {
-    "Regular": 5,
-    "Aceptable": 12,
-    "Bueno": 78,
-    "Muy bueno": 45,
-    "Excelente": 67
+    "1": 2,
+    "2": 5,
+    "3": 12,
+    "4": 18,
+    "5": 25,
+    "6": 78,
+    "7": 34,
+    "8": 45,
+    "9": 67,
+    "UNC": 23
   },
   "caracteristicas_mas_usadas": [
     {
@@ -311,6 +316,27 @@ GET /billetes/stats
   ]
 }
 ```
+
+---
+
+## 📊 **ESCALA DE ESTADOS NUMÉRICA**
+
+Los billetes utilizan una **escala estándar numismática del 1 al 9 más UNC**:
+
+| Estado | Descripción | Uso |
+|--------|-------------|-----|
+| **1** | Muy malo | Billetes muy deteriorados, con roturas significativas |
+| **2** | Malo | Billetes con daños notables, manchas, escritura |
+| **3** | Regular | Billetes con signos evidentes de uso y desgaste |
+| **4** | Aceptable | Billetes usados con desgaste moderado |
+| **5** | Promedio | Billetes con uso ligero, algunas marcas menores |
+| **6** | Bueno | Billetes bien conservados, uso mínimo |
+| **7** | Muy bueno | Billetes en excelente estado con uso casi imperceptible |
+| **8** | Excelente | Billetes prácticamente perfectos, mínimas imperfecciones |
+| **9** | Casi perfecto | Billetes en condición casi nueva |
+| **UNC** | Sin circular | Billetes nuevos, nunca circulados (Uncirculated) |
+
+> **Nota**: Esta escala sigue estándares internacionales de numismática y notafilia, facilitando la valoración y comparación de billetes.
 
 ---
 
@@ -536,6 +562,13 @@ Authorization: Bearer {jwt_token}  // Para endpoints protegidos
 ---
 
 ## 📝 **CHANGELOG**
+
+### **v2.0.0 - 13 de octubre de 2025** 🚨 **BREAKING CHANGE**
+- ✅ **Sistema de estados numérico implementado**: 1-9 + UNC
+- ✅ **Nueva escala estándar numismática**: 1=Muy malo, 2=Malo, 3=Regular, 4=Aceptable, 5=Promedio, 6=Bueno, 7=Muy bueno, 8=Excelente, 9=Casi perfecto, UNC=Sin circular
+- ✅ **Migración automática** de estados textuales a numéricos
+- ✅ **Documentación actualizada** con nueva escala
+- ⚠️ **Breaking Change**: Los estados ahora son valores numéricos en lugar de texto
 
 ### **v1.5.0 - 8 de octubre de 2025**
 - ✅ Actualizada escala de estados de billetes
